@@ -142,7 +142,7 @@ function orderHtml(o,i){
  return '<div class="ord'+(opt?' opt':'')+'" '+(o.filled?'style="opacity:.6"':'')+'>'
   +'<div class="ordhead"><span class="badge '+(sell?'down':'up')+'">'+esc(o.side)+'</span><span class="tk">'+(o.fund?'NASDAQ100 投信':esc(o.ticker))+'</span><span class="mut">'+esc(o.name||'')+'</span></div>'
   +(opt&&o.reason?'<div class="note">'+esc(o.reason)+'</div>':'')
-  +rec+(o.shares_whole!=null?'<div class="note">端株が使えない場合は <b>'+o.shares_whole+'株</b>（'+yen(o.amount_jpy_whole)+'）。差額は翌月末に回します。 <button onclick="$('a_sh'+i+'').value=''+o.shares_whole+''" style="padding:3px 8px;font-size:12px">1株単位にする</button> <button onclick="$('a_sh'+i+'').value=''+o.shares+''" style="padding:3px 8px;font-size:12px">端株に戻す</button></div>':'')
+  +rec+(o.shares_whole!=null?'<div class="note">端株が使えない場合は <b>'+o.shares_whole+'株</b>（'+yen(o.amount_jpy_whole)+'）。差額は翌月末に回します。 <button class="setq" data-i="'+i+'" data-q="'+o.shares_whole+'" style="padding:3px 8px;font-size:12px">1株単位にする</button> <button class="setq" data-i="'+i+'" data-q="'+o.shares+'" style="padding:3px 8px;font-size:12px">端株に戻す</button></div>':'')
   +'<h3 style="margin-top:4px">実際に'+(sell?'売った':'買った')+'内容</h3>'+inputs
   +'<div class="act2"><span class="note" style="flex:1;margin:0">'+(o.fund?'投資信託は金額で注文':(Number.isInteger(Number(o.shares))?'1株単位。買えた口数を送信':'端株（小数）で注文。端株が無理なら1株単位で買い、その口数を送信'))+'</span><button class="p" onclick="sendOrder('+i+')">送信</button></div>'
   +'<div class="st" id="a_msg'+i+'"></div>'+st+'</div>'}
@@ -213,6 +213,7 @@ async function load(force){
   $('lock').style.display='none';render(b);
  }catch(e){$('sub').textContent='読み込めませんでした（電波？）'}}
 seg($('o_side'));
+document.addEventListener('click',e=>{const b=e.target.closest('.setq');if(!b)return;e.preventDefault();const el=$('a_sh'+b.dataset.i);if(el)el.value=b.dataset.q});
 getPass();load(true);
 if('serviceWorker' in navigator){let reloaded=false;
  navigator.serviceWorker.addEventListener('controllerchange',()=>{if(!reloaded){reloaded=true;location.reload()}});
