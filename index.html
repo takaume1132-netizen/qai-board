@@ -102,7 +102,7 @@ details summary{cursor:pointer;font-weight:600;font-size:15px}
 </div>
 
 <div class="card"><h2>入れ替えの履歴</h2><div id="hist" class="mut">なし</div></div>
-<div class="foot mut"><span>価格は米国市場の前日終値（PC が毎日更新）。検証済みの規則を当てはめた結果で、投資助言ではない。画面 v5</span><button onclick="load(true)">更新</button></div>
+<div class="foot mut"><span>価格は米国市場の前日終値（PC が毎日更新）。検証済みの規則を当てはめた結果で、投資助言ではない。画面 v6</span><button onclick="load(true)">更新</button></div>
 </main>
 <script>
 const $=id=>document.getElementById(id);
@@ -122,7 +122,7 @@ async function decrypt(blob,pass){const te=new TextEncoder();const b64=s=>Uint8A
  const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:b64(blob.iv)},key,b64(blob.ct));return JSON.parse(new TextDecoder().decode(pt))}
 function sentLog(){try{return JSON.parse(localStorage.getItem('qai_sent')||'{}')}catch(e){return {}}}
 function markSent(k,t){const s=sentLog();s[k]=t;try{localStorage.setItem('qai_sent',JSON.stringify(s))}catch(e){}}
-async function post(text){if(!INBOX)return [false,'受信先が未設定です'];
+async function post(text){if(B&&B.test)return [false,'テスト表示中なので送信しません（本番では PC に送られます）: '+text];if(!INBOX)return [false,'受信先が未設定です'];
  try{const r=await fetch('https://ntfy.sh/'+INBOX,{method:'POST',body:text,headers:{'Title':'約定','Priority':'2'}});return [r.ok,r.ok?'送りました: '+text:'送れませんでした']}
  catch(e){return [false,'送れませんでした（電波？）']}}
 function seg(el){el.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;e.preventDefault();[...el.children].forEach(x=>x.classList.toggle('on',x===b))})}
@@ -187,7 +187,8 @@ function render(b){B=b;INBOX=b.inbox||'';
  $('k_total').textContent=b.total_jpy!=null?yen(b.total_jpy):'—';
  $('k_ret').textContent=pct(b.ret);$('k_ret').className=cls(b.ret);$('k_spy').textContent=pct(b.spy_ret);
  $('k_next').textContent=(b.next_check_days??'—')+' 営業日';
- $('notice').innerHTML=b.notice?'<div class="card" style="border-color:var(--acc)"><h2>運用の開始</h2><div>'+esc(b.notice)+'</div></div>':'';
+ document.body.style.outline=b.test?'6px solid #d98a00':'';
+ $('notice').innerHTML=(b.test?'<div class="card" style="border:2px solid #d98a00;background:#fff4dc;color:#5a3a00"><h2>【テスト表示】注文しないでください</h2><div>本番の注文が出たときの見た目の確認用です。送信ボタンも送りません。次の PC の処理（翌朝 9:30）で元の画面に戻ります。</div></div>':'')+(b.notice?'<div class="card" style="border-color:var(--acc)"><h2>運用の開始</h2><div>'+esc(b.notice)+'</div></div>':'');
  $('alert').innerHTML=b.alert?'<div class="card alert"><h2>'+esc(b.alert.title)+'</h2><div>'+esc(b.alert.body).replace(/\n/g,'<br>')+'</div></div>':'';
  const oc=$('ordersCard');
  if(b.orders&&b.orders.length){oc.style.display='';
