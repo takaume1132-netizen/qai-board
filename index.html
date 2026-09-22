@@ -102,7 +102,7 @@ details summary{cursor:pointer;font-weight:600;font-size:15px}
 </div>
 
 <div class="card"><h2>入れ替えの履歴</h2><div id="hist" class="mut">なし</div></div>
-<div class="foot mut"><span>価格は米国市場の前日終値（PC が毎日更新）。検証済みの規則を当てはめた結果で、投資助言ではない。画面 v6</span><button onclick="load(true)">更新</button></div>
+<div class="foot mut"><span>価格は米国市場の前日終値（PC が毎日更新）。検証済みの規則を当てはめた結果で、投資助言ではない。画面 v7</span><button onclick="load(true)">更新</button></div>
 </main>
 <script>
 const $=id=>document.getElementById(id);
@@ -143,7 +143,7 @@ function orderHtml(o,i){
   +'<div class="ordhead"><span class="badge '+(sell?'down':'up')+'">'+esc(o.side)+'</span><span class="tk">'+(o.fund?'NASDAQ100 投信':esc(o.ticker))+'</span><span class="mut">'+esc(o.name||'')+'</span></div>'
   +(opt&&o.reason?'<div class="note">'+esc(o.reason)+'</div>':'')
   +rec+'<h3 style="margin-top:4px">実際に'+(sell?'売った':'買った')+'内容</h3>'+inputs
-  +'<div class="act2"><span class="note" style="flex:1;margin:0">'+(o.fund?'投資信託は金額で注文':'値段と口数を直してから')+'</span><button class="p" onclick="sendOrder('+i+')">送信</button></div>'
+  +'<div class="act2"><span class="note" style="flex:1;margin:0">'+(o.fund?'投資信託は金額で注文':(Number.isInteger(Number(o.shares))?'1株単位。買えた口数を送信':'端株（小数）で注文。端株が無理なら1株単位で買い、その口数を送信'))+'</span><button class="p" onclick="sendOrder('+i+')">送信</button></div>'
   +'<div class="st" id="a_msg'+i+'"></div>'+st+'</div>'}
 async function sendOrder(i){const o=B.orders[i],side=o.side.includes('売')?'売':'買',m=$('a_msg'+i);let text;
  if(o.fund){const a=$('a_px'+i).value.replace(/[,，¥]/g,'').trim();if(!a||isNaN(+a)){m.textContent='購入額（円）を入れてください';m.className='st ng';return}text='CORE '+side+' '+a}
@@ -192,7 +192,7 @@ function render(b){B=b;INBOX=b.inbox||'';
  $('alert').innerHTML=b.alert?'<div class="card alert"><h2>'+esc(b.alert.title)+'</h2><div>'+esc(b.alert.body).replace(/\n/g,'<br>')+'</div></div>':'';
  const oc=$('ordersCard');
  if(b.orders&&b.orders.length){oc.style.display='';
-  $('ordersNote').textContent=(b.orders_date||'')+' の指示。米国市場の寄付（日本時間 22:30、冬は 23:30）に指値で注文。売りを先に。買えたら下の「実際に買った内容」を直して送信。';
+  $('ordersNote').textContent=(b.orders_date||'')+' の指示。米国市場の寄付（日本時間 22:30、冬は 23:30）に指値で注文。売りを先に。買えたら下の「実際に買った内容」を直して送信。1株単位の余りや買えなかった分は、翌月末の買い付けに自動で回します。';
   $('orders').innerHTML=b.orders.map(orderHtml).join('');0}
  else oc.style.display='none';
  $('curveNote').textContent=b.curve_kind==='actual'?('最初の約定（'+(b.curve_start||'')+'）＝100。入金の分は除いて測る'):'まだ約定が無いので、指示どおりに売買した想定の推移';
