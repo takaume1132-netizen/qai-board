@@ -43,11 +43,13 @@ button.p{background:var(--acc);color:#fff;border-color:var(--acc)}
 <div class="mut" id="ordersNote"></div>
 <table><thead><tr><th>売買</th><th>銘柄</th><th class="n">株数／金額</th><th class="n">指値の目安</th><th>口座</th><th></th></tr></thead><tbody id="orders"></tbody></table>
 <div class="row" style="margin-top:8px"><select id="f_side"><option value="買">買い</option><option value="売">売り</option></select>
-<input id="f_tk" placeholder="銘柄（投信は CORE）" style="width:120px"><input id="f_sh" placeholder="株数（投信は円）" inputmode="decimal"><input id="f_px" placeholder="約定単価（投信は空）" inputmode="decimal">
+<input id="f_tk" placeholder="銘柄（投信は CORE・3倍は TQQQ）" style="width:120px"><input id="f_sh" placeholder="株数（投信は円）" inputmode="decimal"><input id="f_px" placeholder="約定単価（投信は空）" inputmode="decimal">
 <select id="f_acct"><option value="NISA">NISA（成長枠）</option><option value="つみたて">つみたて枠</option><option value="課税">課税口座</option></select>
 <button class="p" onclick="sendFill()">送る</button></div>
-<div class="row"><input id="f_cash" placeholder="口座の現金（ドル）" inputmode="decimal"><button onclick="sendCash()">現金を送る</button><span id="f_msg"></span></div>
-<div class="mut">送った約定は PC が次の処理（火〜土 9:30・21:00）で取り込み、以後の指示は実際の持ち高を基準に出します。</div></div>
+<div class="row"><input id="f_dep" placeholder="今月の追加投資（円）" inputmode="numeric"><button class="p" onclick="sendDeposit()">入金を送る</button></div>
+<div class="row"><input id="f_cash" placeholder="口座の現金の訂正（ドル）" inputmode="decimal"><button onclick="sendCash()">現金を送る</button><span id="f_msg"></span></div>
+<div class="mut" id="depNote"></div>
+<div class="mut">送った約定・入金は PC が次の処理（火〜土 9:30・21:00）で取り込みます。入金が届いた日に買い増しの指示を出し、以後の指示は実際の持ち高を基準に出します。口座は「どちらで買ったか」の記録用（売る順番の判断に使う）。</div></div>
 <div class="card"><h2>推移（記録開始＝100）</h2><svg id="chart" viewBox="0 0 300 90" preserveAspectRatio="none"></svg>
 <div class="mut">青: この方針 ／ 灰: S&amp;P500（SPY）</div></div>
 <div class="card"><h2>持ち株と比率 <span class="mut" id="basis"></span></h2>
@@ -83,6 +85,7 @@ function sendFill(){const t=document.getElementById('f_tk').value.trim().toUpper
  if(t==='CORE'){if(!sh){msg('投信は円の金額を「株数」欄に入れてください',false);return}post('CORE '+s+' '+sh+' '+a);return}
  if(!t||!sh||!px){msg('銘柄・株数・約定単価を入れてください',false);return}post(t+' '+s+' '+sh+' '+px+' '+a)}
 function sendCash(){const c=document.getElementById('f_cash').value.trim();if(!c){msg('現金の額を入れてください',false);return}post('CASH '+c)}
+function sendDeposit(){const c=document.getElementById('f_dep').value.trim().replace(/[,，]/g,'');if(!c||isNaN(Number(c))){msg('今月の追加投資額（円）を入れてください',false);return}post('入金 '+c)}
 function render(b){
  document.getElementById('title').textContent=b.strategy||'quant-ai';
  document.getElementById('sub').textContent='米国市場 '+b.asof+' 終値まで ／ 更新 '+b.updated;
@@ -91,6 +94,7 @@ function render(b){
  document.getElementById('k_next').textContent=(b.next_check_days??'—')+' 営業日';
  INBOX=b.inbox||'';chart(b.curve);
  document.getElementById('basis').textContent=b.basis?'（'+b.basis+'）':'';
+ const dn=document.getElementById('depNote');if(dn){dn.textContent=(b.deposit_pending_jpy>0?'受け取った入金 ¥'+Number(b.deposit_pending_jpy).toLocaleString()+'（次の処理で買い増しの指示を出します）':'')+(b.monthly_hint_jpy?'　目安: 月 ¥'+Number(b.monthly_hint_jpy).toLocaleString():'')}
  const rows=b.holdings.map(h=>'<tr><td><span class="tk">'+h.ticker+'</span><span class="nm">'+(h.name||'')+'</span></td><td class="n">'+(h.weight*100).toFixed(1)+'%<div class="bar" style="width:'+Math.min(100,h.weight*1000)+'%"></div>'+(h.shares?'<span class="mut">'+Number(h.shares).toFixed(h.shares%1?3:0)+'株'+(h.accounts?'（'+h.accounts+'）':'')+'</span>':'')+'</td><td class="n">'+fmt(h.close)+'</td><td class="n '+cls(h.chg)+'">'+pct(h.chg)+'</td><td class="n '+cls(h.gain)+'">'+pct(h.gain,0)+'</td></tr>').join('');
  document.getElementById('rows').innerHTML=rows||'<tr><td colspan="5" class="mut">まだ持ち株はない（注文を約定したら下の欄から送る）</td></tr>';
  document.getElementById('cash').textContent=(b.cash_usd!=null?'現金 '+fmt(b.cash_usd,0)+' ドル':'現金 '+(b.cash*100).toFixed(1)+'%')+(b.pending?' ／ 注文待ち: '+b.pending:'');
@@ -99,7 +103,7 @@ function render(b){
  const oc=document.getElementById('ordersCard');
  if(b.orders&&b.orders.length){oc.style.display='';document.getElementById('ordersNote').textContent=(b.orders_date||'')+' の指示。次の米国市場の寄付（日本時間 22:30／冬 23:30）に指値で。売りを先に。約定したら株数と単価を送ってください。';
   document.getElementById('orders').innerHTML=b.orders.map(o=>{const side=o.side.includes('売')?'売':'買';const core=(b.vehicle&&o.shares==null&&o.limit==null);const qty=core?('¥'+Number(o.amount_jpy||0).toLocaleString()):((o.shares??'—')+(o.amount_jpy?'<span class="mut"> ¥'+Number(o.amount_jpy).toLocaleString()+'</span>':''));
-   return '<tr class="'+(o.filled?'done':'')+'"><td class="'+(side=='売'?'down':'up')+'">'+o.side+'</td><td class="tk">'+o.ticker+(core?'<span class="nm">投信</span>':'')+'</td><td class="n">'+qty+'</td><td class="n">'+(core?'—':fmt(o.limit))+'</td><td>'+(o.account||'')+'</td><td><button onclick="pick(\''+o.ticker+'\',\''+side+'\',\''+(core?(o.amount_jpy||''):(o.shares||''))+'\',\''+(o.limit||'')+'\',\''+(o.account||'')+'\','+(core?'true':'false')+')">入力</button></td></tr>'}).join('')}
+   return '<tr class="'+(o.filled?'done':'')+'"><td class="'+(side=='売'?'down':'up')+'">'+o.side+'</td><td class="tk">'+o.ticker+(core?'<span class="nm">投信</span>':'')+'</td><td class="n">'+qty+'</td><td class="n">'+(core?'—':fmt(o.limit))+'</td><td>'+(o.account||'')+'</td><td><button onclick="pick(\''+o.ticker+'\',\''+side+'\',\''+(core?(o.amount_jpy||''):(o.shares||''))+'\',\''+(o.limit||'')+'\',\''+(o.account||'')+'\','+(core?'true':'false')+')">入力</button></td></tr>'+(o.side.includes('選択肢')&&o.reason?'<tr><td colspan="6" class="mut" style="font-size:12px">'+o.reason+'</td></tr>':'')}).join('')}
  else{oc.style.display='none'}
  document.getElementById('hist').innerHTML=(b.changes||[]).slice(0,8).map(c=>'<div><b>'+c.date+'</b> 売り '+(c.sell.join(', ')||'なし')+' ／ 買い '+(c.buy.join(', ')||'なし')+'</div>').join('')||'なし';
 }
