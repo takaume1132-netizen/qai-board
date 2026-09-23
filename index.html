@@ -140,9 +140,11 @@ nav.tabs .dot{position:absolute;top:2px;left:calc(50% + 8px);min-width:16px;heig
  <div class="card">
   <h2>口座の残金の確認</h2>
   <div class="num" id="cashPc" style="font-size:18px;font-weight:700"></div>
-  <div class="note">moomoo の残金（円と米ドルを円に換算した合計）と比べてください。為替の動きで少しずれるのは問題ありません。</div>
-  <div class="act2"><button class="p" style="flex:1" onclick="cashOk()">合っている</button></div>
-  <div class="act2"><input id="f_cashjpy" placeholder="違う場合：実際の残金（円）" inputmode="numeric"><button onclick="sendCashJpy()">送る</button></div>
+  <div class="num" id="cashSplit" style="margin-top:2px"></div>
+  <div class="note">moomoo の「円の残金」と「ドルの残金」と、それぞれ比べてください。売買の日の前に照合しておくと、注文が残金を超えません。</div>
+  <div class="act2"><button class="p" style="flex:1" onclick="cashOk()">両方とも合っている</button></div>
+  <h3>違う場合は、moomoo の実際の残金を入れて送る</h3>
+  <div class="act"><label>円の残金<input id="f_cjpy" inputmode="numeric" placeholder="例：30000"></label><label>ドルの残金<input id="f_cusd" inputmode="decimal" placeholder="例：250.50"></label><label>&nbsp;<button onclick="sendCashDual()">送る</button></label></div>
   <div class="st" id="c_msg"></div>
   <div class="note" id="cashLast"></div>
  </div>
@@ -164,7 +166,7 @@ nav.tabs .dot{position:absolute;top:2px;left:calc(50% + 8px);min-width:16px;heig
   <div class="st" id="o_msg"></div>
  </div>
  <div class="card"><h2>入れ替えの履歴</h2><div id="hist" class="mut">なし</div></div>
- <div class="foot mut"><span>価格は米国市場の前日の終値です（PC が毎日更新します）。検証済みの規則を当てはめた結果で、投資助言ではありません。画面 v17</span></div>
+ <div class="foot mut"><span>価格は米国市場の前日の終値です（PC が毎日更新します）。検証済みの規則を当てはめた結果で、投資助言ではありません。画面 v18</span></div>
 </section>
 </main>
 
@@ -260,9 +262,9 @@ async function sendOther(){const t=$('o_tk').value.trim().toUpperCase(),px=$('o_
  const [ok,m]=await post(text);msgTo('o_msg',m,ok)}
 async function sendDeposit(){const c=$('f_dep').value.trim().replace(/[,，¥]/g,'');if(!c||isNaN(+c))return msgTo('d_msg','今月の追加投資額（円）を入れてください。',false);const [ok,m]=await post('入金 '+c);msgTo('d_msg',m,ok)}
 async function cashOk(){const [ok,m]=await post('残金確認 OK');msgTo('c_msg',ok?'合っていることを送りました。':m,ok)}
-async function sendCashJpy(){const c=$('f_cashjpy').value.trim().replace(/[,，¥$]/g,'');
- if(!c||isNaN(+c))return msgTo('c_msg',CUR==='USD'?'実際の残金（ドル）を入れてください。':'実際の残金（円）を入れてください。',false);
- const [ok,m]=await post(CUR==='USD'?'CASH '+c:'残金 '+c);msgTo('c_msg',m,ok)}
+async function sendCashDual(){const j=$('f_cjpy').value.trim().replace(/[,，¥]/g,''),u=$('f_cusd').value.trim().replace(/[,，$]/g,'');
+ if(j===''||u===''||isNaN(+j)||isNaN(+u))return msgTo('c_msg','円とドルの両方を入れてください（無い方は 0）。',false);
+ const [ok,m]=await post('残金 '+j+' '+u);msgTo('c_msg',m,ok)}
 // ---- 推移
 let CV=[],LO=0,HI=1;
 const X=i=>CV.length<2?0:6+(i/(CV.length-1))*308, Y=v=>160-((v-LO)/((HI-LO)||1))*146;
@@ -321,8 +323,9 @@ function render(b){B=b;INBOX=b.inbox||'';
  const orders=b.orders||[];const open=orders.filter(o=>!o.filled&&!o.side.includes('選択肢')).length;
  const dot=$('dot-orders');dot.style.display=open?'':'none';dot.textContent=open;
  $('ordersNote').textContent=orders.length?((b.orders_date||'')+' の指示です。米国市場の寄付（日本時間 22:30、冬は 23:30）に指値で注文してください。売りを先にします。'+(b.limit_note||'')+'寄付が指値を超えて始まったら追いかけず、「買えなかった」を押してください（次の朝に出し直し、最大3日）。買えたら「実際に買った内容」を直して送信してください。'):'いま出ている注文はありません。';
- $('verifyBox').innerHTML=!v?'':(v.status==='pending'?'<div class="banner info"><b>Claude が検算中です</b>注文の銘柄を、報道と数字の両面で確かめています。結果は通知でも知らせます。</div>'
-   :`<div class="banner ${v.status==='ok'?'info':'alert'}"><b>Claude の検算：${({ok:'問題なし',caution:'注意あり',incomplete:'途中まで'})[v.status]||''}</b>${esc(v.summary||'')}${v.checked_at?'<div class="mut">'+esc(v.checked_at.replace('T',' ').slice(0,16))+' 確認</div>':''}</div>`);
+ const unc=orders.length&&b.cash_split&&!b.cash_split.confirmed;
+ $('verifyBox').innerHTML=(unc?'<div class="banner alert"><b>残金が照合されていません</b>注文の合計が口座の残金を超えていないか、moomoo で確かめてから注文してください（「記録」の「口座の残金の確認」で照合できます）。</div>':'')+(!v?'':(v.status==='pending'?'<div class="banner info"><b>Claude が検算中です</b>注文の銘柄を、報道と数字の両面で確かめています。結果は通知でも知らせます。</div>'
+   :`<div class="banner ${v.status==='ok'?'info':'alert'}"><b>Claude の検算：${({ok:'問題なし',caution:'注意あり',incomplete:'途中まで'})[v.status]||''}</b>${esc(v.summary||'')}${v.checked_at?'<div class="mut">'+esc(v.checked_at.replace('T',' ').slice(0,16))+' 確認</div>':''}</div>`));
  $('orders').innerHTML=orders.length?orders.map(orderHtml).join(''):'';
  $('orders').parentElement.style.display=orders.length?'':'none';
  // 持ち株
@@ -334,7 +337,8 @@ function render(b){B=b;INBOX=b.inbox||'';
  $('cash').textContent=(b.cash_jpy!=null?'現金 '+money(b.cash_usd,b.cash_jpy):'')+(b.pending?'／注文待ち：'+b.pending:'');
  // 記録
  $('cashPc').textContent=b.cash_jpy!=null?('PC の計算：'+money(b.cash_usd,b.cash_jpy)+'（'+other(b.cash_usd,b.cash_jpy)+'）'):'—';
- $('f_cashjpy').placeholder=CUR==='USD'?'違う場合：実際の残金（ドル）':'違う場合：実際の残金（円）';
+ const cs=b.cash_split;
+ $('cashSplit').innerHTML=cs?('内訳：円 <b>'+yen(cs.jpy)+'</b>／ドル <b>$'+num(cs.usd,2)+'</b>'+(cs.confirmed?'　<span class="ok">照合済み</span>':'　<span class="ng">未照合</span>')):'';
  const ck=b.cash_check;
  $('cashLast').textContent=!ck?'':('前回の確認：'+ck.date+(ck.actual_jpy==null?'、一致していました。':('、PC の計算 '+money(null,ck.pc_jpy)+'、実際 '+money(null,ck.actual_jpy)+'（PC の計算より '+money(null,Math.abs(ck.diff))+(ck.diff<0?' 少ない':' 多い')+'）。実際の値に合わせました。')));
  $('depCard').style.border=b.deposit_ask?'2px solid var(--acc)':'';$('dot-records').style.display=b.deposit_ask?'':'none';
