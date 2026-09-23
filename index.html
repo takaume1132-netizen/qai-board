@@ -159,11 +159,11 @@ nav.tabs .dot{position:absolute;top:2px;left:calc(50% + 8px);min-width:16px;heig
    <label>口数<input id="o_sh" inputmode="decimal"></label>
   </div>
   <div class="act2"><div class="seg" id="o_side"><button class="on" data-v="買">買い</button><button data-v="売">売り</button></div><button class="p" onclick="sendOther()">送信</button></div>
-  <div class="note">投資信託は、銘柄に CORE、口数の欄に円の金額を入れ、値段は空にしてください。</div>
+  <div class="note">銘柄はティッカー（例：SM、TQQQ）、値段は1株のドル、口数は株数（端株は小数）で入れてください。投資信託は記録できません。</div>
   <div class="st" id="o_msg"></div>
  </div>
  <div class="card"><h2>入れ替えの履歴</h2><div id="hist" class="mut">なし</div></div>
- <div class="foot mut"><span>価格は米国市場の前日の終値です（PC が毎日更新します）。検証済みの規則を当てはめた結果で、投資助言ではありません。画面 v13</span></div>
+ <div class="foot mut"><span>価格は米国市場の前日の終値です（PC が毎日更新します）。検証済みの規則を当てはめた結果で、投資助言ではありません。画面 v14</span></div>
 </section>
 </main>
 
@@ -238,8 +238,9 @@ async function sendOrder(i){const o=B.orders[i],side=o.side.includes('売')?'売
  const [ok,m]=await post(text);msgTo('a_msg'+i,m,ok);
  if(ok)markSent((B.orders_date||'')+'|'+o.ticker+'|'+i,new Date().toLocaleString('ja-JP',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}))}
 async function sendOther(){const t=$('o_tk').value.trim().toUpperCase(),px=$('o_px').value.trim(),sh=$('o_sh').value.trim().replace(/[,，]/g,''),side=segv($('o_side'));let text;
- if(t==='CORE'){if(!sh)return msgTo('o_msg','投資信託は、口数の欄に円の金額を入れてください。',false);text='CORE '+side+' '+sh}
- else{if(!t||!px||!sh)return msgTo('o_msg','銘柄・値段・口数を入れてください。',false);text=t+' '+side+' '+sh+' '+px}
+ // 2026-09-23: CORE（投資信託）は商品を特定できないので受け付けない（ティッカーで入れる）
+ if(t==='CORE')return msgTo('o_msg','投資信託は記録できません。ETF や株のティッカーで入れてください。',false);
+ if(!t||!px||!sh||isNaN(+px)||isNaN(+sh))return msgTo('o_msg','銘柄・値段・口数を入れてください。',false);text=t+' '+side+' '+sh+' '+px
  const [ok,m]=await post(text);msgTo('o_msg',m,ok)}
 async function sendDeposit(){const c=$('f_dep').value.trim().replace(/[,，¥]/g,'');if(!c||isNaN(+c))return msgTo('d_msg','今月の追加投資額（円）を入れてください。',false);const [ok,m]=await post('入金 '+c);msgTo('d_msg',m,ok)}
 async function cashOk(){const [ok,m]=await post('残金確認 OK');msgTo('c_msg',ok?'合っていることを送りました。':m,ok)}
