@@ -108,7 +108,7 @@ nav.tabs .dot{position:absolute;top:2px;left:calc(50% + 8px);min-width:16px;heig
   <button class="tile" data-go="records"><span>口座の残金</span><b class="num" id="k_cash">—</b></button>
   <button class="tile" data-go="orders"><span>Claude の検算</span><b id="k_verify">—</b></button>
  </div>
- <div class="card">
+ <div class="card" id="curveCard">
   <h2>推移</h2>
   <div class="mut" id="curveNote"></div>
   <svg id="chart" viewBox="0 0 320 170" preserveAspectRatio="none"></svg>
@@ -163,7 +163,7 @@ nav.tabs .dot{position:absolute;top:2px;left:calc(50% + 8px);min-width:16px;heig
   <div class="st" id="o_msg"></div>
  </div>
  <div class="card"><h2>入れ替えの履歴</h2><div id="hist" class="mut">なし</div></div>
- <div class="foot mut"><span>価格は米国市場の前日の終値です（PC が毎日更新します）。検証済みの規則を当てはめた結果で、投資助言ではありません。画面 v14</span></div>
+ <div class="foot mut"><span>価格は米国市場の前日の終値です（PC が毎日更新します）。検証済みの規則を当てはめた結果で、投資助言ではありません。画面 v15</span></div>
 </section>
 </main>
 
@@ -249,7 +249,8 @@ async function sendCashJpy(){const c=$('f_cashjpy').value.trim().replace(/[,，�
 let CV=[],LO=0,HI=1;
 const X=i=>CV.length<2?0:6+(i/(CV.length-1))*308, Y=v=>160-((v-LO)/((HI-LO)||1))*146;
 function chart(){const s=$('chart');CV=(B.curve||[]).filter(p=>p.v!=null);
- if(CV.length<2){s.innerHTML='<text x="160" y="90" text-anchor="middle" font-size="12" fill="currentColor" opacity=".55">記録が2日分たまると表示します</text>';showSel(CV.length-1);return}
+ $('curveCard').style.display=CV.length<2?'none':'';
+ if(CV.length<2){s.innerHTML='';showSel(-1);return}
  const all=CV.map(p=>p.v).concat(CV.map(p=>p.spy).filter(v=>v!=null));LO=Math.min(...all,100);HI=Math.max(...all,100);
  const path=k=>CV.map((p,i)=>p[k]==null?null:(i?'L':'M')+X(i).toFixed(1)+' '+Y(p[k]).toFixed(1)).filter(Boolean).join('').replace(/^L/,'M');
  const area=path('v')+`L${X(CV.length-1).toFixed(1)} 164L${X(0).toFixed(1)} 164Z`;
@@ -295,7 +296,7 @@ function render(b){B=b;INBOX=b.inbox||'';
  $('k_cash').textContent=b.cash_jpy!=null?yen(b.cash_jpy):'—';
  const v=b.verify;$('k_verify').textContent=!v?'—':({pending:'確認中',ok:'問題なし',caution:'注意あり',incomplete:'途中まで'}[v.status]||'—');
  $('k_verify').className=v&&v.status==='ok'?'up':(v&&v.status==='caution'?'down':'');
- $('curveNote').textContent=b.curve_kind==='actual'?('最初の約定（'+(b.curve_start||'')+'）を 100 としています。入金の分は除いて測ります。'):'まだ約定がないので、指示どおりに売買した場合の想定の推移です。';
+ $('curveNote').textContent=b.curve_kind==='actual'?('最初の約定（'+(b.curve_start||'')+'）を 100 としています。入金の分は除いて測ります。'):'';
  chart();
  // 注文
  const orders=b.orders||[];const open=orders.filter(o=>!o.filled&&!o.side.includes('選択肢')).length;
@@ -303,16 +304,17 @@ function render(b){B=b;INBOX=b.inbox||'';
  $('ordersNote').textContent=orders.length?((b.orders_date||'')+' の指示です。米国市場の寄付（日本時間 22:30、冬は 23:30）に指値で注文してください。売りを先にします。買えたら、下の「実際に買った内容」を直して送信してください。1株単位の余りや買えなかった分は、翌月末の買い付けに自動で回します。'):'いま出ている注文はありません。';
  $('verifyBox').innerHTML=!v?'':(v.status==='pending'?'<div class="banner info"><b>Claude が検算中です</b>注文の銘柄を、報道と数字の両面で確かめています。結果は通知でも知らせます。</div>'
    :`<div class="banner ${v.status==='ok'?'info':'alert'}"><b>Claude の検算：${({ok:'問題なし',caution:'注意あり',incomplete:'途中まで'})[v.status]||''}</b>${esc(v.summary||'')}${v.checked_at?'<div class="mut">'+esc(v.checked_at.replace('T',' ').slice(0,16))+' 確認</div>':''}</div>`);
- $('orders').innerHTML=orders.length?orders.map(orderHtml).join(''):'<div class="empty">注文が出たら、ここに銘柄・指値・口数が出ます。</div>';
+ $('orders').innerHTML=orders.length?orders.map(orderHtml).join(''):'';
+ $('orders').parentElement.style.display=orders.length?'':'none';
  // 持ち株
- $('basis').textContent=b.basis||'';const nm=b.names||{};
+ $('basis').textContent=b.curve_kind==='actual'?(b.basis||''):'';const nm=b.names||{};
  $('hlist').innerHTML=(b.holdings||[]).map(h=>`<div class="hrow"><div class="av" style="background:${avColor(h.ticker)}">${esc(h.ticker.slice(0,4))}</div>
    <div class="hmid"><b>${esc(h.ticker)}</b><span>${esc(h.name||nm[h.ticker]||'')}</span><span class="num">${h.shares!=null?qty(h.shares)+' 株':''}　比率 ${(h.weight*100).toFixed(1)}%</span><div class="bar"><i style="width:${Math.min(100,h.weight*100*2.5)}%"></i></div></div>
    <div class="hright num"><b>${yen(h.value_jpy)}</b><span class="${cls(h.gain)}">${pct(h.gain,1)}</span></div></div>`).join('')
-  ||'<div class="empty">まだ持ち株はありません（買えたら「注文」から送信してください）。</div>';
+  ||'<div class="empty">—</div>';
  $('cash').textContent=(b.cash_jpy!=null?'現金 '+yen(b.cash_jpy)+(b.cash_usd!=null?'（'+num(b.cash_usd,0)+' ドル）':''):'')+(b.pending?'／注文待ち：'+b.pending:'');
  // 記録
- $('cashPc').textContent=b.cash_jpy!=null?('PC の計算：'+yen(b.cash_jpy)+'（'+num(b.cash_usd,0)+' ドル）'):'まだ約定がないので、最初の注文のあとから計算します。';
+ $('cashPc').textContent=b.cash_jpy!=null?('PC の計算：'+yen(b.cash_jpy)+'（'+num(b.cash_usd,0)+' ドル）'):'—';
  const ck=b.cash_check;
  $('cashLast').textContent=!ck?'':('前回の確認：'+ck.date+(ck.actual_jpy==null?'、一致していました。':('、PC の計算 '+yen(ck.pc_jpy)+'、実際 '+yen(ck.actual_jpy)+'（PC の計算より '+yen(Math.abs(ck.diff))+(ck.diff<0?' 少ない':' 多い')+'）。実際の値に合わせました。')));
  $('depCard').style.border=b.deposit_ask?'2px solid var(--acc)':'';$('dot-records').style.display=b.deposit_ask?'':'none';
