@@ -147,7 +147,7 @@ nav.tabs .dot{position:absolute;top:2px;left:calc(50% + 8px);min-width:16px;heig
  </div>
  <div class="card" id="depCard">
   <h2>今月の追加投資</h2>
-  <div class="act2"><input id="f_dep" placeholder="例：80000（円）" inputmode="numeric"><button class="p" onclick="sendDeposit()">入金を送る</button></div>
+  <div class="act2"><input id="f_dep" placeholder="今月の追加投資額（円）" inputmode="numeric"><button class="p" onclick="sendDeposit()">入金を送る</button></div>
   <div class="note" id="depNote"></div>
   <div class="st" id="d_msg"></div>
  </div>
@@ -315,7 +315,7 @@ function render(b){B=b;INBOX=b.inbox||'';
  const ck=b.cash_check;
  $('cashLast').textContent=!ck?'':('前回の確認：'+ck.date+(ck.actual_jpy==null?'、一致していました。':('、PC の計算 '+yen(ck.pc_jpy)+'、実際 '+yen(ck.actual_jpy)+'（PC の計算より '+yen(Math.abs(ck.diff))+(ck.diff<0?' 少ない':' 多い')+'）。実際の値に合わせました。')));
  $('depCard').style.border=b.deposit_ask?'2px solid var(--acc)':'';$('dot-records').style.display=b.deposit_ask?'':'none';
- $('depNote').textContent=(b.deposit_pending_jpy>0?'受け取った入金：'+yen(b.deposit_pending_jpy)+'（次の処理で買い増しの指示を出します）。':'')+(b.monthly_hint_jpy?'目安は月 '+yen(b.monthly_hint_jpy)+' です。':'');
+ $('depNote').textContent=(b.deposit_pending_jpy>0?'受け取った入金：'+yen(b.deposit_pending_jpy)+'（次の処理で買い増しの指示を出します）。':'');
  $('hist').innerHTML=(b.changes||[]).slice(0,8).map(c=>`<div><b>${esc(c.date)}</b>　売り ${esc(c.sell.join('、')||'なし')}／買い ${esc(c.buy.join('、')||'なし')}</div>`).join('')||'なし';
  // 最初に開くタブ: 未約定の注文があれば「注文」
  if(!userTab){let t='home';try{t=localStorage.getItem('qai_tab')||'home'}catch(e){}if(open)t='orders';show(t,false)}
