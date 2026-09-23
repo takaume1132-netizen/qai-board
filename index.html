@@ -3,124 +3,189 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>quant-ai</title>
+<title>Quant AI</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon-192.png">
-<meta name="theme-color" content="#1f5f8b">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="theme-color" content="#0e1116" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f4f5f7" media="(prefers-color-scheme: light)">
 <style>
-:root{--bg:#f6f6f3;--fg:#1c1c1a;--mut:#6d6c66;--line:#e2e1db;--card:#fff;--soft:#f0efe9;--acc:#1f5f8b;--acc-fg:#fff;--up:#1f7a3d;--down:#b3372d;--warn:#8a5a00;--spy:#9a9a94}
-@media (prefers-color-scheme:dark){:root{--bg:#141413;--fg:#ecebe6;--mut:#a3a29c;--line:#302f2c;--card:#1d1d1b;--soft:#262624;--acc:#7fb4de;--acc-fg:#10202c;--up:#7fd197;--down:#ef8a80;--warn:#e3b35a;--spy:#77766f}}
-*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.5 system-ui,"Noto Sans JP","Hiragino Sans",sans-serif}
-header{padding:14px 16px 6px}h1{font-size:17px;margin:0}.mut{color:var(--mut);font-size:12.5px}
-main{padding:0 16px 40px;max-width:680px;margin:0 auto}
-.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:10px 0}
-h2{font-size:15px;margin:0 0 6px}h3{font-size:13px;margin:10px 0 4px;color:var(--mut);font-weight:600}
-.kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:8px 12px}.kpi b{display:block;font-size:19px;font-variant-numeric:tabular-nums}
-.alert{border-color:var(--warn)}.alert h2{color:var(--warn)}
-table{width:100%;border-collapse:collapse;font-size:13.5px}td,th{padding:6px 3px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
-th{font-weight:600;color:var(--mut);font-size:11.5px}td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
-.up{color:var(--up)}.down{color:var(--down)}.tk{font-weight:700}.nm{display:block;color:var(--mut);font-size:11.5px;line-height:1.3}
-.ord{border-top:1px solid var(--line);padding:10px 0}.ord:first-of-type{border-top:0}
-.ordhead{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
-.badge{font-size:12px;font-weight:700;border-radius:6px;padding:1px 7px;border:1px solid currentColor}
-.rec{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin:6px 0;background:var(--soft);border-radius:8px;padding:6px 8px}
-.rec span{display:block;color:var(--mut);font-size:11px}.rec b{font-variant-numeric:tabular-nums;font-size:15px}
-.act{display:grid;grid-template-columns:1.1fr 1fr .8fr;gap:6px}
-.act label{font-size:11px;color:var(--mut);display:flex;flex-direction:column;gap:2px}
-.act2{display:flex;gap:6px;align-items:center;margin-top:6px}
-input,button,select{font:inherit;border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:8px;padding:8px 9px;min-width:0;width:100%}
-button{width:auto;cursor:pointer}button.p{background:var(--acc);color:var(--acc-fg);border-color:var(--acc);font-weight:600}
-.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;flex:1}
-.seg button{border:0;border-radius:0;flex:1;padding:8px 6px;background:var(--card)}
-.seg button.on{background:var(--acc);color:var(--acc-fg);font-weight:600}
-.note{font-size:12px;color:var(--mut);margin-top:4px}
-.st{font-size:12px;margin-top:4px}.ok{color:var(--up)}.ng{color:var(--down)}
-.opt{border-left:3px solid var(--acc);padding-left:9px}
-svg{width:100%;height:150px;display:block;touch-action:pan-y}
-.legend{display:flex;gap:14px;font-size:12px;color:var(--mut);margin-top:4px}.legend i{display:inline-block;width:14px;height:3px;border-radius:2px;vertical-align:middle;margin-right:4px}
+:root{--bg:#f4f5f7;--card:#ffffff;--card2:#f0f2f5;--fg:#12151a;--mut:#6b7280;--line:#e5e7eb;--acc:#2f6bff;--acc2:#e8efff;--acc-fg:#ffffff;
+ --up:#0a9f6a;--up2:#e3f6ee;--down:#e5484d;--down2:#fdecec;--warn:#b26a00;--warn2:#fff3dd;--spy:#a0a7b4;--shadow:0 1px 2px rgba(16,24,40,.06),0 1px 3px rgba(16,24,40,.08)}
+@media (prefers-color-scheme:dark){:root{--bg:#0e1116;--card:#171b22;--card2:#1f242d;--fg:#eef1f5;--mut:#8b93a1;--line:#262c35;--acc:#5b8cff;--acc2:#1b2640;--acc-fg:#0b1020;
+ --up:#27c28c;--up2:#12291f;--down:#ff6b6e;--down2:#2e1718;--warn:#f0b04a;--warn2:#2e2412;--spy:#5d6572;--shadow:none}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.5 system-ui,-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif}
+.num{font-variant-numeric:tabular-nums}
+/* 上のバー */
+.top{position:sticky;top:0;z-index:5;background:var(--bg);padding:calc(10px + env(safe-area-inset-top)) 16px 8px;display:flex;align-items:center;gap:10px}
+.logo{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--acc),#7c5cff);display:grid;place-items:center;color:#fff}
+.brand{font-weight:800;font-size:19px;letter-spacing:.2px}.brand small{display:block;font-weight:500;font-size:11.5px;color:var(--mut);letter-spacing:0;margin-top:-2px}
+.top .sp{flex:1}.iconbtn{width:36px;height:36px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--fg);display:grid;place-items:center}
+main{padding:0 16px calc(84px + env(safe-area-inset-bottom));max-width:640px;margin:0 auto}
+.tab{display:none}.tab.on{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 16px;margin:12px 0;box-shadow:var(--shadow)}
+h2{font-size:16px;margin:0 0 6px}h3{font-size:12.5px;margin:12px 0 6px;color:var(--mut);font-weight:600}
+.mut{color:var(--mut);font-size:12.5px}.note{font-size:12.5px;color:var(--mut);margin-top:6px}
+/* 評価額 */
+.hero{padding:10px 2px 4px}.hero .lab{color:var(--mut);font-size:13px}.hero .val{font-size:34px;font-weight:800;letter-spacing:-.5px;line-height:1.15;margin:2px 0 6px}
+.pill{display:inline-flex;align-items:center;gap:4px;border-radius:999px;padding:2px 10px;font-weight:700;font-size:13px;background:var(--card2)}
+.pill.up{color:var(--up);background:var(--up2)}.pill.down{color:var(--down);background:var(--down2)}
+.chip{display:inline-block;margin-top:10px;border-radius:999px;padding:4px 12px;font-size:12.5px;background:var(--acc2);color:var(--acc);font-weight:600}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 12px;box-shadow:var(--shadow);min-width:0}
+.tile span{display:block;color:var(--mut);font-size:11.5px}.tile b{display:block;font-size:15px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+button.tile{text-align:left;color:var(--fg);font:inherit}
+/* グラフ */
+#chart{width:100%;height:170px;display:block;touch-action:pan-y}
+nav.tabs svg,.logo svg,.iconbtn svg{width:22px;height:22px;flex:none}.logo svg,.iconbtn svg{width:18px;height:18px}
+.legend{display:flex;gap:14px;font-size:12px;color:var(--mut);margin-top:6px;flex-wrap:wrap}.legend i{display:inline-block;width:14px;height:3px;border-radius:2px;vertical-align:middle;margin-right:5px}
 .sel{margin-top:8px;font-size:13px}
-details summary{cursor:pointer;font-weight:600;font-size:15px}
-.foot{padding:6px 2px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+/* 表 */
+table{width:100%;border-collapse:collapse;font-size:13.5px}td,th{padding:7px 3px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}
+th{font-weight:600;color:var(--mut);font-size:11.5px}td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.up{color:var(--up)}.down{color:var(--down)}
+/* 持ち株 */
+.hrow{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}.hrow:last-child{border-bottom:0}
+.av{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-weight:800;font-size:12px;color:#fff;flex:none}
+.hmid{flex:1;min-width:0}.hmid b{display:block}.hmid span{display:block;color:var(--mut);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hright{text-align:right}.hright b{display:block}.bar{height:4px;border-radius:2px;background:var(--card2);margin-top:6px;overflow:hidden}.bar i{display:block;height:100%;background:var(--acc)}
+/* 注文 */
+.ord{border-top:1px solid var(--line);padding:14px 0}.ord:first-child{border-top:0;padding-top:4px}
+.ordhead{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.tk{font-weight:800;font-size:16px}
+.badge{font-size:12px;font-weight:700;border-radius:8px;padding:2px 8px}.badge.buy{color:var(--up);background:var(--up2)}.badge.sell{color:var(--down);background:var(--down2)}
+.vchip{font-size:12px;border-radius:8px;padding:2px 8px;font-weight:600}.vchip.ok{color:var(--up);background:var(--up2)}.vchip.caution{color:var(--warn);background:var(--warn2)}.vchip.skip{color:var(--down);background:var(--down2)}.vchip.pending{color:var(--mut);background:var(--card2)}
+.rec{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin:10px 0;background:var(--card2);border-radius:12px;padding:8px 10px}
+.rec span{display:block;color:var(--mut);font-size:11px}.rec b{font-variant-numeric:tabular-nums;font-size:15.5px}
+.act{display:grid;grid-template-columns:1.1fr 1fr .8fr;gap:8px}.act label{font-size:11px;color:var(--mut);display:flex;flex-direction:column;gap:3px}
+.act2{display:flex;gap:8px;align-items:center;margin-top:8px}.act2 input{flex:1;width:auto;min-width:0}.act2>button{flex:none}
+input,button,select{font:inherit;border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:10px;padding:9px 10px;min-width:0;width:100%}
+input:focus{outline:2px solid var(--acc);outline-offset:-1px}
+button{width:auto;cursor:pointer;white-space:nowrap}button.p{background:var(--acc);color:var(--acc-fg);border-color:var(--acc);font-weight:700}
+button.small{padding:4px 10px;font-size:12px;border-radius:8px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;flex:1;background:var(--card)}
+.seg button{border:0;border-radius:0;flex:1;padding:9px 6px;background:transparent}.seg button.on{background:var(--acc);color:var(--acc-fg);font-weight:700}
+.st{font-size:12.5px;margin-top:6px}.ok{color:var(--up)}.ng{color:var(--down)}
+.opt{border-left:3px solid var(--acc);padding-left:10px}
+.banner{border-radius:14px;padding:12px 14px;margin:12px 0;font-size:13.5px}
+.banner.test{background:var(--warn2);color:var(--warn);border:1.5px solid var(--warn)}.banner.info{background:var(--acc2);color:var(--fg);border:1px solid var(--acc)}
+.banner.alert{background:var(--warn2);border:1px solid var(--warn)}
+.banner b{display:block;margin-bottom:2px}
+.empty{color:var(--mut);font-size:13px;padding:8px 0}
+/* 下のタブ */
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--card);border-top:1px solid var(--line);display:flex;padding:6px 6px calc(6px + env(safe-area-inset-bottom))}
+nav.tabs button{flex:1;border:0;background:transparent;color:var(--mut);display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;padding:6px 0;position:relative;border-radius:10px}
+nav.tabs button.on{color:var(--acc);font-weight:700}
+nav.tabs .dot{position:absolute;top:2px;left:calc(50% + 8px);min-width:16px;height:16px;border-radius:8px;background:var(--down);color:#fff;font-size:10px;line-height:16px;padding:0 4px;font-weight:700}
+.foot{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:4px 2px 12px}
 </style>
 </head>
 <body>
-<header><h1 id="title">quant-ai</h1><div class="mut" id="sub">読み込み中…</div></header>
+<div class="top">
+ <div class="logo" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg></div>
+ <div class="brand">Quant AI<small id="sub">読み込み中…</small></div>
+ <div class="sp"></div>
+ <button class="iconbtn" aria-label="更新" onclick="load(true)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg></button>
+</div>
 <main>
 <div id="lock" class="card" style="display:none"><h2>合言葉</h2><div class="mut">初回だけ、PC の QR を読むか、合言葉を入力してください。</div>
-<div class="act2"><input id="pass" type="password" placeholder="合言葉"><button class="p" onclick="savePass()">開く</button></div></div>
-<div id="notice"></div>
-<div id="alert"></div>
-<div class="card kpis">
- <div class="kpi"><span class="mut">評価額（円）</span><b id="k_total">—</b></div>
- <div class="kpi"><span class="mut">開始から</span><b id="k_ret">—</b></div>
- <div class="kpi"><span class="mut">同じ期間の S&amp;P500</span><b id="k_spy">—</b></div>
- <div class="kpi"><span class="mut">次の点検まで</span><b id="k_next">—</b></div>
-</div>
+ <div class="act2"><input id="pass" type="password" placeholder="合言葉"><button class="p" onclick="savePass()">開く</button></div></div>
+<div id="banners"></div>
 
-<div class="card" id="ordersCard" style="display:none">
- <h2>今日の注文</h2>
- <div class="mut" id="ordersNote"></div>
- <div id="orders"></div>
-</div>
+<section class="tab" id="t-home">
+ <div class="hero">
+  <div class="lab">評価額</div>
+  <div class="val num" id="k_total">—</div>
+  <div><span class="pill num" id="k_ret">—</span> <span class="mut">開始から</span>　<span class="mut">S&amp;P500 <b class="num" id="k_spy">—</b></span></div>
+  <div class="chip" id="strat">—</div>
+ </div>
+ <div class="tiles">
+  <div class="tile"><span>次の点検まで</span><b class="num" id="k_next">—</b></div>
+  <button class="tile" data-go="records"><span>口座の残金</span><b class="num" id="k_cash">—</b></button>
+  <button class="tile" data-go="orders"><span>Claude の検算</span><b id="k_verify">—</b></button>
+ </div>
+ <div class="card">
+  <h2>推移</h2>
+  <div class="mut" id="curveNote"></div>
+  <svg id="chart" viewBox="0 0 320 170" preserveAspectRatio="none"></svg>
+  <div class="legend"><span><i style="background:var(--acc)"></i>この運用</span><span><i style="background:var(--spy)"></i>S&amp;P500</span><span>グラフを押すと、その日の持ち株</span></div>
+  <div class="sel" id="sel"></div>
+ </div>
+</section>
 
-<div class="card">
- <h2>推移（開始＝100）</h2>
- <div class="mut" id="curveNote"></div>
- <svg id="chart" viewBox="0 0 320 150" preserveAspectRatio="none"></svg>
- <div class="legend"><span><i style="background:var(--acc)"></i>この運用</span><span><i style="background:var(--spy)"></i>S&amp;P500</span><span>点を押すとその日の持ち株</span></div>
- <div class="sel" id="sel"></div>
-</div>
+<section class="tab" id="t-orders">
+ <div class="card">
+  <h2>今日の注文</h2>
+  <div class="mut" id="ordersNote"></div>
+  <div id="verifyBox"></div>
+ </div>
+ <div class="card"><div id="orders"></div></div>
+</section>
 
-<div class="card">
- <h2>持ち株（いま）</h2>
- <div class="mut" id="basis"></div>
- <table><thead><tr><th>銘柄</th><th class="n">口数</th><th class="n">評価額</th><th class="n">比率</th><th class="n">損益</th></tr></thead><tbody id="rows"></tbody></table>
- <div class="mut" id="cash" style="margin-top:6px"></div>
-</div>
+<section class="tab" id="t-holdings">
+ <div class="card">
+  <h2>持ち株</h2>
+  <div class="mut" id="basis"></div>
+  <div id="hlist"></div>
+  <div class="note" id="cash"></div>
+ </div>
+</section>
 
-<div class="card">
- <h2>口座の残金の確認</h2>
- <div id="cashPc" style="font-size:18px;font-variant-numeric:tabular-nums"></div>
- <div class="note">moomoo の残金（円と米ドルを円に換算した合計）と比べてください。為替の動きで少しずれるのは問題ありません。</div>
- <div class="act2"><button class="p" onclick="cashOk()">合っている</button>
-  <input id="f_cashjpy" placeholder="違う場合：実際の残金（円）" inputmode="numeric"><button onclick="sendCashJpy()">送る</button></div>
- <div class="st" id="c_msg"></div>
- <div class="note" id="cashLast"></div>
-</div>
-
-<div class="card">
- <details id="other"><summary>その他の約定と今月の入金</summary>
-  <h3>指示にない売買</h3>
-  <div class="act">
-   <label>銘柄<input id="o_tk" placeholder="例：RNR" autocapitalize="characters"></label>
-   <label>購入値（ドル）<input id="o_px" inputmode="decimal"></label>
-   <label>口数<input id="o_sh" inputmode="decimal"></label>
-  </div>
-  <div class="act2">
-   <div class="seg" id="o_side"><button class="on" data-v="買">買い</button><button data-v="売">売り</button></div>
-   <button class="p" onclick="sendOther()">送信</button>
-  </div>
-  <div class="note">投資信託は、銘柄に CORE、口数の欄に円の金額を入れ、購入値は空にしてください。</div>
-  <h3>今月の追加投資</h3>
+<section class="tab" id="t-records">
+ <div class="card">
+  <h2>口座の残金の確認</h2>
+  <div class="num" id="cashPc" style="font-size:18px;font-weight:700"></div>
+  <div class="note">moomoo の残金（円と米ドルを円に換算した合計）と比べてください。為替の動きで少しずれるのは問題ありません。</div>
+  <div class="act2"><button class="p" style="flex:1" onclick="cashOk()">合っている</button></div>
+  <div class="act2"><input id="f_cashjpy" placeholder="違う場合：実際の残金（円）" inputmode="numeric"><button onclick="sendCashJpy()">送る</button></div>
+  <div class="st" id="c_msg"></div>
+  <div class="note" id="cashLast"></div>
+ </div>
+ <div class="card" id="depCard">
+  <h2>今月の追加投資</h2>
   <div class="act2"><input id="f_dep" placeholder="例：80000（円）" inputmode="numeric"><button class="p" onclick="sendDeposit()">入金を送る</button></div>
   <div class="note" id="depNote"></div>
+  <div class="st" id="d_msg"></div>
+ </div>
+ <div class="card">
+  <h2>指示にない売買</h2>
+  <div class="act">
+   <label>銘柄<input id="o_tk" placeholder="例：RNR" autocapitalize="characters"></label>
+   <label>値段（ドル）<input id="o_px" inputmode="decimal"></label>
+   <label>口数<input id="o_sh" inputmode="decimal"></label>
+  </div>
+  <div class="act2"><div class="seg" id="o_side"><button class="on" data-v="買">買い</button><button data-v="売">売り</button></div><button class="p" onclick="sendOther()">送信</button></div>
+  <div class="note">投資信託は、銘柄に CORE、口数の欄に円の金額を入れ、値段は空にしてください。</div>
   <div class="st" id="o_msg"></div>
- </details>
-</div>
-
-<div class="card"><h2>入れ替えの履歴</h2><div id="hist" class="mut">なし</div></div>
-<div class="foot mut"><span>価格は米国市場の前日の終値です（PC が毎日更新します）。検証済みの規則を当てはめた結果で、投資助言ではありません。画面 v10</span><button onclick="load(true)">更新</button></div>
+ </div>
+ <div class="card"><h2>入れ替えの履歴</h2><div id="hist" class="mut">なし</div></div>
+ <div class="foot mut"><span>価格は米国市場の前日の終値です（PC が毎日更新します）。検証済みの規則を当てはめた結果で、投資助言ではありません。画面 v12</span></div>
+</section>
 </main>
+
+<nav class="tabs" id="tabs">
+ <button data-tab="home" class="on"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></svg>ホーム</button>
+ <button data-tab="orders"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5h10M9 12h10M9 19h10"/><path d="M4 5h.01M4 12h.01M4 19h.01"/></svg>注文<span class="dot" id="dot-orders" style="display:none"></span></button>
+ <button data-tab="holdings"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12A9 9 0 1 1 12 3v9z"/><path d="M15 3.5A9 9 0 0 1 20.5 9H15z"/></svg>持ち株</button>
+ <button data-tab="records"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l4 4v14H6z"/><path d="M9 12h7M9 16h7"/></svg>記録<span class="dot" id="dot-records" style="display:none">!</span></button>
+</nav>
+
 <script>
 const $=id=>document.getElementById(id);
 const pct=(x,d=1)=>x==null?'—':((x>0?'+':'')+(x*100).toFixed(d)+'%');
 const cls=x=>x==null?'':(x>=0?'up':'down');
 const yen=x=>x==null?'—':(x<0?'−¥'+Math.round(-x).toLocaleString():'¥'+Math.round(x).toLocaleString());
 const num=(x,d=2)=>x==null||x===''?'—':Number(x).toLocaleString(undefined,{minimumFractionDigits:d,maximumFractionDigits:d});
-const qty=x=>x==null?'—':(Math.abs(x-Math.round(x))<1e-6?String(Math.round(x)):Number(x).toFixed(3));
+const qty=x=>x==null?'—':(Math.abs(x-Math.round(x))<1e-6?String(Math.round(x)):Number(x).toFixed(2));
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-let B=null,INBOX='';
+let B=null,INBOX='',userTab=false;
+// ---- タブ
+function show(t,byUser){document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x.id==='t-'+t));
+ document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===t));
+ if(byUser){userTab=true;try{localStorage.setItem('qai_tab',t)}catch(e){}}window.scrollTo({top:0})}
+$('tabs').addEventListener('click',e=>{const b=e.target.closest('button');if(b)show(b.dataset.tab,true)});
+document.addEventListener('click',e=>{const g=e.target.closest('[data-go]');if(g){show(g.dataset.go,true)}});
+// ---- 合言葉と復号
 function getPass(){const h=location.hash.match(/k=([^&]+)/);if(h){try{localStorage.setItem('qai_pass',decodeURIComponent(h[1]))}catch(e){}history.replaceState(null,'',location.pathname)}
  try{return localStorage.getItem('qai_pass')||''}catch(e){return ''}}
 function savePass(){try{localStorage.setItem('qai_pass',$('pass').value)}catch(e){}load(true)}
@@ -128,98 +193,123 @@ async function decrypt(blob,pass){const te=new TextEncoder();const b64=s=>Uint8A
  const km=await crypto.subtle.importKey('raw',te.encode(pass),'PBKDF2',false,['deriveKey']);
  const key=await crypto.subtle.deriveKey({name:'PBKDF2',salt:b64(blob.salt),iterations:blob.iter,hash:'SHA-256'},km,{name:'AES-GCM',length:256},false,['decrypt']);
  const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:b64(blob.iv)},key,b64(blob.ct));return JSON.parse(new TextDecoder().decode(pt))}
+// ---- 送信
 function sentLog(){try{return JSON.parse(localStorage.getItem('qai_sent')||'{}')}catch(e){return {}}}
 function markSent(k,t){const s=sentLog();s[k]=t;try{localStorage.setItem('qai_sent',JSON.stringify(s))}catch(e){}}
 async function post(text){if(B&&B.test)return [false,'テスト表示中なので送信しません（本番では PC に送られます）：'+text];if(!INBOX)return [false,'受信先が未設定です。'];
  try{const r=await fetch('https://ntfy.sh/'+INBOX,{method:'POST',body:text,headers:{'Title':'約定','Priority':'2'}});return [r.ok,r.ok?'送りました：'+text:'送れませんでした。']}
  catch(e){return [false,'送れませんでした（電波を確認してください）。']}}
+function msgTo(id,t,ok){const m=$(id);m.textContent=t;m.className='st '+(ok?'ok':'ng')}
 function seg(el){el.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;e.preventDefault();[...el.children].forEach(x=>x.classList.toggle('on',x===b))})}
 const segv=el=>(el.querySelector('.on')||{}).dataset?.v||'';
-
-// ---- 注文と実際の入力
+// ---- 注文
+const VLAB={ok:'検算：問題なし',caution:'検算：注意',skip:'検算：見送りを推奨',pending:'検算：確認中'};
+function vitem(t){const v=B.verify;if(!v)return null;if(v.status==='pending')return {verdict:'pending',note:''};return (v.items||{})[t]||null}
 function orderHtml(o,i){
- const sell=o.side.includes('売'),opt=o.side.includes('選択肢');
- const key=(B.orders_date||'')+'|'+o.ticker+'|'+i,sent=sentLog()[key];
+ const sell=o.side.includes('売'),opt=o.side.includes('選択肢'),key=(B.orders_date||'')+'|'+o.ticker+'|'+i,sent=sentLog()[key],v=vitem(o.ticker);
  const rec=o.fund
-  ?'<div class="rec"><div><span>推奨の指値</span><b>—</b></div><div><span>口数</span><b>金額で</b></div><div><span>金額</span><b>'+yen(o.amount_jpy)+'</b></div></div>'
-  :'<div class="rec"><div><span>推奨の指値</span><b>'+(o.limit!=null?'$'+num(o.limit):'成行')+'</b></div><div><span>口数</span><b>'+(o.shares??'—')+'</b></div><div><span>金額の目安</span><b>'+yen(o.amount_jpy)+'</b></div></div>';
+  ?`<div class="rec"><div><span>推奨の指値</span><b>—</b></div><div><span>口数</span><b>金額で</b></div><div><span>金額</span><b>${yen(o.amount_jpy)}</b></div></div>`
+  :`<div class="rec"><div><span>推奨の指値</span><b>${o.limit!=null?'$'+num(o.limit):'成行'}</b></div><div><span>口数</span><b>${esc(o.shares??'—')}</b></div><div><span>金額の目安</span><b>${yen(o.amount_jpy)}</b></div></div>`;
+ const whole=o.shares_whole!=null?`<div class="note">端株が使えない場合は <b>${o.shares_whole}株</b>です（${yen(o.amount_jpy_whole)}）。差額は翌月末に回します。 <button class="small setq" data-i="${i}" data-q="${o.shares_whole}">1株単位にする</button> <button class="small setq" data-i="${i}" data-q="${esc(o.shares)}">端株に戻す</button></div>`:'';
  const inputs=o.fund
-  ?'<div class="act"><label>銘柄<input value="CORE（投信）" disabled></label><label>購入額（円）<input id="a_px'+i+'" inputmode="numeric" value="'+(o.amount_jpy??'')+'"></label><label>口数<input value="—" disabled></label></div>'
-  :'<div class="act"><label>銘柄<input id="a_tk'+i+'" value="'+esc(o.ticker)+'" autocapitalize="characters"></label><label>'+(sell?'売却値':'購入値')+'（ドル）<input id="a_px'+i+'" inputmode="decimal" value="'+(o.limit??'')+'"></label><label>口数<input id="a_sh'+i+'" inputmode="decimal" value="'+(typeof o.shares==='number'?o.shares:(o.held??''))+'"></label></div>';
- const st=o.filled?'<div class="st ok">PC が取り込み済み</div>':(sent?'<div class="st ok">送信済み（'+esc(sent)+'）。PC の次の処理で取り込みます。</div>':'');
- return '<div class="ord'+(opt?' opt':'')+'" '+(o.filled?'style="opacity:.6"':'')+'>'
-  +'<div class="ordhead"><span class="badge '+(sell?'down':'up')+'">'+esc(o.side)+'</span><span class="tk">'+(o.fund?'NASDAQ100 投信':esc(o.ticker))+'</span><span class="mut">'+esc(o.name||'')+'</span></div>'
-  +(opt&&o.reason?'<div class="note">'+esc(o.reason)+'</div>':'')
-  +rec+(o.shares_whole!=null?'<div class="note">端株が使えない場合は <b>'+o.shares_whole+'株</b>です（'+yen(o.amount_jpy_whole)+'）。差額は翌月末に回します。 <button class="setq" data-i="'+i+'" data-q="'+o.shares_whole+'" style="padding:3px 8px;font-size:12px">1株単位にする</button> <button class="setq" data-i="'+i+'" data-q="'+o.shares+'" style="padding:3px 8px;font-size:12px">端株に戻す</button></div>':'')
-  +'<h3 style="margin-top:4px">実際に'+(sell?'売った':'買った')+'内容</h3>'+inputs
-  +'<div class="act2"><span class="note" style="flex:1;margin:0">'+(o.fund?'投資信託は金額で注文します。':(Number.isInteger(Number(o.shares))?'1株単位で注文し、買えた口数を送信してください。':'端株（小数）で注文してください。端株が使えない場合は1株単位で買い、その口数を送信してください。'))+'</span><button class="p" onclick="sendOrder('+i+')">送信</button></div>'
-  +'<div class="st" id="a_msg'+i+'"></div>'+st+'</div>'}
-async function sendOrder(i){const o=B.orders[i],side=o.side.includes('売')?'売':'買',m=$('a_msg'+i);let text;
- if(o.fund){const a=$('a_px'+i).value.replace(/[,，¥]/g,'').trim();if(!a||isNaN(+a)){m.textContent='購入額（円）を入れてください。';m.className='st ng';return}text='CORE '+side+' '+a}
+  ?`<div class="act"><label>銘柄<input value="CORE（投信）" disabled></label><label>購入額（円）<input id="a_px${i}" inputmode="numeric" value="${o.amount_jpy??''}"></label><label>口数<input value="—" disabled></label></div>`
+  :`<div class="act"><label>銘柄<input id="a_tk${i}" value="${esc(o.ticker)}" autocapitalize="characters"></label><label>${sell?'売却値':'購入値'}（ドル）<input id="a_px${i}" inputmode="decimal" value="${o.limit??''}"></label><label>口数<input id="a_sh${i}" inputmode="decimal" value="${typeof o.shares==='number'?o.shares:(o.held??'')}"></label></div>`;
+ const hint=o.fund?'投資信託は金額で注文します。':(Number.isInteger(Number(o.shares))?'1株単位で注文し、買えた口数を送信してください。':'端株（小数）で注文してください。端株が使えない場合は1株単位で買い、その口数を送信してください。');
+ const st=o.filled?'<div class="st ok">PC が取り込み済みです。</div>':(sent?`<div class="st ok">送信済み（${esc(sent)}）。PC の次の処理で取り込みます。</div>`:'');
+ const vh=v?`<span class="vchip ${v.verdict}">${VLAB[v.verdict]}</span>`:'';
+ const vnote=v&&v.note?`<div class="note">${esc(v.note)}</div>`:'';
+ return `<div class="ord${opt?' opt':''}" ${o.filled?'style="opacity:.6"':''}>
+  <div class="ordhead"><span class="badge ${sell?'sell':'buy'}">${esc(o.side)}</span><span class="tk">${o.fund?'NASDAQ100 投信':esc(o.ticker)}</span>${vh}</div>
+  <div class="mut">${esc(o.name||'')}</div>${vnote}
+  ${opt&&o.reason?`<div class="note">${esc(o.reason)}</div>`:''}
+  ${rec}${whole}<h3>実際に${sell?'売った':'買った'}内容</h3>${inputs}
+  <div class="act2"><span class="note" style="flex:1;margin:0">${hint}</span><button class="p" data-send="${i}">送信</button></div>
+  <div class="st" id="a_msg${i}"></div>${st}</div>`}
+document.addEventListener('click',e=>{const b=e.target.closest('.setq');if(b){e.preventDefault();const el=$('a_sh'+b.dataset.i);if(el)el.value=b.dataset.q}
+ const s=e.target.closest('[data-send]');if(s){e.preventDefault();sendOrder(+s.dataset.send)}});
+async function sendOrder(i){const o=B.orders[i],side=o.side.includes('売')?'売':'買';let text;
+ if(o.fund){const a=$('a_px'+i).value.replace(/[,，¥]/g,'').trim();if(!a||isNaN(+a))return msgTo('a_msg'+i,'購入額（円）を入れてください。',false);text='CORE '+side+' '+a}
  else{const t=$('a_tk'+i).value.trim().toUpperCase(),px=$('a_px'+i).value.trim(),sh=$('a_sh'+i).value.trim();
-  if(!t||!px||!sh||isNaN(+px)||isNaN(+sh)){m.textContent='銘柄・値段・口数を入れてください。';m.className='st ng';return}text=t+' '+side+' '+sh+' '+px}
- const [ok,msg]=await post(text);m.textContent=msg;m.className='st '+(ok?'ok':'ng');
- if(ok){markSent((B.orders_date||'')+'|'+o.ticker+'|'+i,new Date().toLocaleString('ja-JP',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}))}}
+  if(!t||!px||!sh||isNaN(+px)||isNaN(+sh))return msgTo('a_msg'+i,'銘柄・値段・口数を入れてください。',false);text=t+' '+side+' '+sh+' '+px}
+ const [ok,m]=await post(text);msgTo('a_msg'+i,m,ok);
+ if(ok)markSent((B.orders_date||'')+'|'+o.ticker+'|'+i,new Date().toLocaleString('ja-JP',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}))}
 async function sendOther(){const t=$('o_tk').value.trim().toUpperCase(),px=$('o_px').value.trim(),sh=$('o_sh').value.trim().replace(/[,，]/g,''),side=segv($('o_side'));let text;
- if(t==='CORE'){if(!sh){return say('投資信託は、口数の欄に円の金額を入れてください。',false)}text='CORE '+side+' '+sh}
- else{if(!t||!px||!sh)return say('銘柄・購入値・口数を入れてください。',false);text=t+' '+side+' '+sh+' '+px}
- const [ok,msg]=await post(text);say(msg,ok)}
-async function sendDeposit(){const c=$('f_dep').value.trim().replace(/[,，¥]/g,'');if(!c||isNaN(+c))return say('今月の追加投資額（円）を入れてください。',false);const [ok,msg]=await post('入金 '+c);say(msg,ok)}
-async function cashOk(){const [ok,msg]=await post('残金確認 OK');const el=$('c_msg');el.textContent=ok?'合っていることを送りました。':msg;el.className='st '+(ok?'ok':'ng')}
-async function sendCashJpy(){const c=$('f_cashjpy').value.trim().replace(/[,，¥]/g,'');const el=$('c_msg');
- if(!c||isNaN(+c)){el.textContent='実際の残金（円）を入れてください。';el.className='st ng';return}
- const [ok,msg]=await post('残金 '+c);el.textContent=msg;el.className='st '+(ok?'ok':'ng')}
-function say(t,ok){const m=$('o_msg');m.textContent=t;m.className='st '+(ok?'ok':'ng')}
-
-// ---- 推移（開始＝100）と、その日の持ち株
+ if(t==='CORE'){if(!sh)return msgTo('o_msg','投資信託は、口数の欄に円の金額を入れてください。',false);text='CORE '+side+' '+sh}
+ else{if(!t||!px||!sh)return msgTo('o_msg','銘柄・値段・口数を入れてください。',false);text=t+' '+side+' '+sh+' '+px}
+ const [ok,m]=await post(text);msgTo('o_msg',m,ok)}
+async function sendDeposit(){const c=$('f_dep').value.trim().replace(/[,，¥]/g,'');if(!c||isNaN(+c))return msgTo('d_msg','今月の追加投資額（円）を入れてください。',false);const [ok,m]=await post('入金 '+c);msgTo('d_msg',m,ok)}
+async function cashOk(){const [ok,m]=await post('残金確認 OK');msgTo('c_msg',ok?'合っていることを送りました。':m,ok)}
+async function sendCashJpy(){const c=$('f_cashjpy').value.trim().replace(/[,，¥]/g,'');if(!c||isNaN(+c))return msgTo('c_msg','実際の残金（円）を入れてください。',false);const [ok,m]=await post('残金 '+c);msgTo('c_msg',m,ok)}
+// ---- 推移
 let CV=[],LO=0,HI=1;
-const X=i=>CV.length<2?0:6+(i/(CV.length-1))*308, Y=v=>140-((v-LO)/((HI-LO)||1))*128;
-function chart(){const s=$('chart');CV=(B.curve||[]).filter(p=>p.v!=null);if(CV.length<2){s.innerHTML='<text x="160" y="80" text-anchor="middle" font-size="12" fill="currentColor" opacity=".6">記録が2日分たまると表示します</text>';showSel(CV.length-1);return}
+const X=i=>CV.length<2?0:6+(i/(CV.length-1))*308, Y=v=>160-((v-LO)/((HI-LO)||1))*146;
+function chart(){const s=$('chart');CV=(B.curve||[]).filter(p=>p.v!=null);
+ if(CV.length<2){s.innerHTML='<text x="160" y="90" text-anchor="middle" font-size="12" fill="currentColor" opacity=".55">記録が2日分たまると表示します</text>';showSel(CV.length-1);return}
  const all=CV.map(p=>p.v).concat(CV.map(p=>p.spy).filter(v=>v!=null));LO=Math.min(...all,100);HI=Math.max(...all,100);
  const path=k=>CV.map((p,i)=>p[k]==null?null:(i?'L':'M')+X(i).toFixed(1)+' '+Y(p[k]).toFixed(1)).filter(Boolean).join('').replace(/^L/,'M');
- s.innerHTML='<line x1="6" x2="314" y1="'+Y(100).toFixed(1)+'" y2="'+Y(100).toFixed(1)+'" stroke="var(--line)" stroke-dasharray="3 3"/>'
-  +'<path d="'+path('spy')+'" fill="none" stroke="var(--spy)" stroke-width="1.5" vector-effect="non-scaling-stroke"/>'
-  +'<path d="'+path('v')+'" fill="none" stroke="var(--acc)" stroke-width="2.2" vector-effect="non-scaling-stroke"/>'
-  +'<line id="cx" y1="6" y2="144" stroke="var(--mut)" stroke-width="1" vector-effect="non-scaling-stroke"/><circle id="cd" r="3.5" fill="var(--acc)"/>';
+ const area=path('v')+`L${X(CV.length-1).toFixed(1)} 164L${X(0).toFixed(1)} 164Z`;
+ s.innerHTML=`<defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--acc)" stop-opacity=".22"/><stop offset="1" stop-color="var(--acc)" stop-opacity="0"/></linearGradient></defs>
+  <line x1="6" x2="314" y1="${Y(100).toFixed(1)}" y2="${Y(100).toFixed(1)}" stroke="var(--line)" stroke-dasharray="3 3"/>
+  <path d="${area}" fill="url(#g)"/><path d="${path('spy')}" fill="none" stroke="var(--spy)" stroke-width="1.5" vector-effect="non-scaling-stroke"/>
+  <path d="${path('v')}" fill="none" stroke="var(--acc)" stroke-width="2.4" vector-effect="non-scaling-stroke"/>
+  <line id="cx" y1="6" y2="164" stroke="var(--mut)" stroke-width="1" vector-effect="non-scaling-stroke"/><circle id="cd" r="3.5" fill="var(--acc)"/>`;
  showSel(CV.length-1)}
 function pickAt(ev){if(CV.length<2)return;const r=$('chart').getBoundingClientRect(),x=((ev.touches?ev.touches[0].clientX:ev.clientX)-r.left)/r.width*320;
  showSel(Math.max(0,Math.min(CV.length-1,Math.round((x-6)/308*(CV.length-1)))))}
 function showSel(i){const p=CV[i],el=$('sel');if(!p){el.innerHTML='';return}
  const cx=$('cx'),cd=$('cd');if(cx){cx.setAttribute('x1',X(i));cx.setAttribute('x2',X(i));cd.setAttribute('cx',X(i));cd.setAttribute('cy',Y(p.v))}
- let h='<b>'+p.date+'</b>：この運用 '+p.v.toFixed(1)+(p.spy!=null?'（S&amp;P500 '+p.spy.toFixed(1)+'）':'')+(p.total_jpy!=null?'、評価額 '+yen(p.total_jpy):'');
- if(p.h){const nm=B.names||{};h+='<table style="margin-top:4px"><thead><tr><th>その日の持ち株</th><th class="n">口数</th><th class="n">額</th></tr></thead><tbody>'
-  +p.h.map(r=>'<tr><td><span class="tk">'+(r[0]==='QQQ'&&B.vehicle?'NASDAQ100 投信':esc(r[0]))+'</span><span class="nm">'+esc(nm[r[0]]||'')+'</span></td><td class="n">'+(r[0]==='QQQ'&&B.vehicle?'QQQ 換算 '+qty(r[1]):qty(r[1]))+'</td><td class="n">'+yen(r[2])+'</td></tr>').join('')
-  +(p.cash_jpy!=null?'<tr><td>現金</td><td></td><td class="n">'+yen(p.cash_jpy)+'</td></tr>':'')+'</tbody></table>'}
+ let h=`<b>${p.date}</b>：この運用 ${p.v.toFixed(1)}${p.spy!=null?'（S&amp;P500 '+p.spy.toFixed(1)+'）':''}${p.total_jpy!=null?'、評価額 '+yen(p.total_jpy):''}`;
+ if(p.h){const nm=B.names||{};h+='<table style="margin-top:6px"><thead><tr><th>その日の持ち株</th><th class="n">口数</th><th class="n">金額</th></tr></thead><tbody>'
+  +p.h.map(r=>`<tr><td><b>${esc(r[0])}</b> <span class="mut">${esc(nm[r[0]]||'')}</span></td><td class="n">${qty(r[1])}</td><td class="n">${yen(r[2])}</td></tr>`).join('')
+  +(p.cash_jpy!=null?`<tr><td>現金</td><td></td><td class="n">${yen(p.cash_jpy)}</td></tr>`:'')+'</tbody></table>'}
  el.innerHTML=h}
 ['mousedown','mousemove','touchstart','touchmove'].forEach(t=>$('chart').addEventListener(t,e=>{if(t==='mousemove'&&!e.buttons)return;pickAt(e)},{passive:true}));
-
+// ---- 表示
+const PAL=['#2f6bff','#7c5cff','#0a9f6a','#e5484d','#d97706','#0891b2','#db2777','#4f46e5','#059669','#b45309'];
+function avColor(t){let h=0;for(const c of t)h=(h*31+c.charCodeAt(0))>>>0;return PAL[h%PAL.length]}
 function render(b){B=b;INBOX=b.inbox||'';
- $('title').textContent=b.strategy||'quant-ai';
- $('sub').textContent='米国市場 '+b.asof+' の終値まで／更新 '+b.updated+(b.fx?'／1ドル '+Number(b.fx).toFixed(1)+'円':'');
- $('k_total').textContent=b.total_jpy!=null?yen(b.total_jpy):'—';
- $('k_ret').textContent=pct(b.ret);$('k_ret').className=cls(b.ret);$('k_spy').textContent=pct(b.spy_ret);
+ $('sub').textContent='米国市場 '+b.asof+' の終値まで'+(b.fx?'／1ドル '+Number(b.fx).toFixed(1)+'円':'');
+ $('strat').textContent=b.strategy_short||'—';
+ // 知らせ
+ let bn='';
+ if(b.test)bn+='<div class="banner test"><b>テスト表示（注文しないでください）</b>本番の注文が出たときの見た目の確認用です。送信ボタンも送りません。次の PC の処理で元の画面に戻ります。</div>';
+ if(b.notice)bn+=`<div class="banner info"><b>運用の開始</b>${esc(b.notice)}</div>`;
+ if(b.list_note)bn+=`<div class="banner alert">${esc(b.list_note)}</div>`;
+ if(b.alert)bn+=`<div class="banner alert"><b>${esc(b.alert.title)}</b>${esc(b.alert.body).replace(/\n/g,'<br>')}</div>`;
+ if(b.deposit_ask)bn+='<div class="banner info"><b>今月の追加投資額を教えてください</b>「記録」の「今月の追加投資」から送ってください。 <button class="small" data-go="records">開く</button></div>';
+ $('banners').innerHTML=bn;
+ // ホーム
+ $('k_total').textContent=b.total_jpy!=null?yen(b.total_jpy):(b.notice?'運用開始前':'—');
+ const kr=$('k_ret');kr.textContent=pct(b.ret);kr.className='pill num '+cls(b.ret);$('k_spy').textContent=pct(b.spy_ret);
  $('k_next').textContent=(b.next_check_days??'—')+' 営業日';
- document.body.style.outline=b.test?'6px solid #d98a00':'';
- $('notice').innerHTML=(b.test?'<div class="card" style="border:2px solid #d98a00;background:#fff4dc;color:#5a3a00"><h2>【テスト表示】注文しないでください</h2><div>本番の注文が出たときの見た目の確認用です。送信ボタンも送りません。次の PC の処理（翌朝 9:30）で元の画面に戻ります。</div></div>':'')+(b.notice?'<div class="card" style="border-color:var(--acc)"><h2>運用の開始</h2><div>'+esc(b.notice)+'</div></div>':'');
- $('alert').innerHTML=b.alert?'<div class="card alert"><h2>'+esc(b.alert.title)+'</h2><div>'+esc(b.alert.body).replace(/\n/g,'<br>')+'</div></div>':'';
- const oc=$('ordersCard');
- if(b.orders&&b.orders.length){oc.style.display='';
-  $('ordersNote').textContent=(b.orders_date||'')+' の指示です。米国市場の寄付（日本時間 22:30、冬は 23:30）に指値で注文してください。売りを先にします。買えたら、下の「実際に買った内容」を直して送信してください。1株単位の余りや買えなかった分は、翌月末の買い付けに自動で回します。';
-  $('orders').innerHTML=b.orders.map(orderHtml).join('');0}
- else oc.style.display='none';
+ $('k_cash').textContent=b.cash_jpy!=null?yen(b.cash_jpy):'—';
+ const v=b.verify;$('k_verify').textContent=!v?'—':({pending:'確認中',ok:'問題なし',caution:'注意あり',incomplete:'途中まで'}[v.status]||'—');
+ $('k_verify').className=v&&v.status==='ok'?'up':(v&&v.status==='caution'?'down':'');
  $('curveNote').textContent=b.curve_kind==='actual'?('最初の約定（'+(b.curve_start||'')+'）を 100 としています。入金の分は除いて測ります。'):'まだ約定がないので、指示どおりに売買した場合の想定の推移です。';
  chart();
- $('basis').textContent=b.basis||'';
- const nm=b.names||{};
- $('rows').innerHTML=(b.holdings||[]).map(h=>'<tr><td><span class="tk">'+(h.ticker==='QQQ'&&b.vehicle?'NASDAQ100 投信':esc(h.ticker))+'</span><span class="nm">'+esc(h.name||'')+'</span></td><td class="n">'+(h.shares!=null?((h.ticker==='QQQ'&&b.vehicle?'QQQ換算 ':'')+qty(h.shares)):'—')+'</td><td class="n">'+yen(h.value_jpy)+'</td><td class="n">'+(h.weight*100).toFixed(1)+'%</td><td class="n '+cls(h.gain)+'">'+pct(h.gain,1)+'</td></tr>').join('')
-  ||'<tr><td colspan="5" class="mut">まだ持ち株はありません（買えたら「今日の注文」から送信してください）。</td></tr>';
+ // 注文
+ const orders=b.orders||[];const open=orders.filter(o=>!o.filled&&!o.side.includes('選択肢')).length;
+ const dot=$('dot-orders');dot.style.display=open?'':'none';dot.textContent=open;
+ $('ordersNote').textContent=orders.length?((b.orders_date||'')+' の指示です。米国市場の寄付（日本時間 22:30、冬は 23:30）に指値で注文してください。売りを先にします。買えたら、下の「実際に買った内容」を直して送信してください。1株単位の余りや買えなかった分は、翌月末の買い付けに自動で回します。'):'いま出ている注文はありません。';
+ $('verifyBox').innerHTML=!v?'':(v.status==='pending'?'<div class="banner info"><b>Claude が検算中です</b>注文の銘柄を、報道と数字の両面で確かめています。結果は通知でも知らせます。</div>'
+   :`<div class="banner ${v.status==='ok'?'info':'alert'}"><b>Claude の検算：${({ok:'問題なし',caution:'注意あり',incomplete:'途中まで'})[v.status]||''}</b>${esc(v.summary||'')}${v.checked_at?'<div class="mut">'+esc(v.checked_at.replace('T',' ').slice(0,16))+' 確認</div>':''}</div>`);
+ $('orders').innerHTML=orders.length?orders.map(orderHtml).join(''):'<div class="empty">注文が出たら、ここに銘柄・指値・口数が出ます。</div>';
+ // 持ち株
+ $('basis').textContent=b.basis||'';const nm=b.names||{};
+ $('hlist').innerHTML=(b.holdings||[]).map(h=>`<div class="hrow"><div class="av" style="background:${avColor(h.ticker)}">${esc(h.ticker.slice(0,4))}</div>
+   <div class="hmid"><b>${esc(h.ticker)}</b><span>${esc(h.name||nm[h.ticker]||'')}</span><span class="num">${h.shares!=null?qty(h.shares)+' 株':''}　比率 ${(h.weight*100).toFixed(1)}%</span><div class="bar"><i style="width:${Math.min(100,h.weight*100*2.5)}%"></i></div></div>
+   <div class="hright num"><b>${yen(h.value_jpy)}</b><span class="${cls(h.gain)}">${pct(h.gain,1)}</span></div></div>`).join('')
+  ||'<div class="empty">まだ持ち株はありません（買えたら「注文」から送信してください）。</div>';
+ $('cash').textContent=(b.cash_jpy!=null?'現金 '+yen(b.cash_jpy)+(b.cash_usd!=null?'（'+num(b.cash_usd,0)+' ドル）':''):'')+(b.pending?'／注文待ち：'+b.pending:'');
+ // 記録
  $('cashPc').textContent=b.cash_jpy!=null?('PC の計算：'+yen(b.cash_jpy)+'（'+num(b.cash_usd,0)+' ドル）'):'まだ約定がないので、最初の注文のあとから計算します。';
  const ck=b.cash_check;
- $('cashLast').textContent=!ck?'':('前回の確認：'+ck.date+(ck.actual_jpy==null?'、一致していました。'
-   :('、PC の計算 '+yen(ck.pc_jpy)+'、実際 '+yen(ck.actual_jpy)+'（PC の計算より '+yen(Math.abs(ck.diff))+(ck.diff<0?' 少ない':' 多い')+'）。実際の値に合わせました。')));
- $('cash').textContent=(b.cash_jpy!=null?'現金 '+yen(b.cash_jpy)+(b.cash_usd!=null?'（'+num(b.cash_usd,0)+' ドル）':''):'現金 '+(b.cash*100).toFixed(1)+'%')+(b.pending?'／注文待ち：'+b.pending:'');
+ $('cashLast').textContent=!ck?'':('前回の確認：'+ck.date+(ck.actual_jpy==null?'、一致していました。':('、PC の計算 '+yen(ck.pc_jpy)+'、実際 '+yen(ck.actual_jpy)+'（PC の計算より '+yen(Math.abs(ck.diff))+(ck.diff<0?' 少ない':' 多い')+'）。実際の値に合わせました。')));
+ $('depCard').style.border=b.deposit_ask?'2px solid var(--acc)':'';$('dot-records').style.display=b.deposit_ask?'':'none';
  $('depNote').textContent=(b.deposit_pending_jpy>0?'受け取った入金：'+yen(b.deposit_pending_jpy)+'（次の処理で買い増しの指示を出します）。':'')+(b.monthly_hint_jpy?'目安は月 '+yen(b.monthly_hint_jpy)+' です。':'');
- $('hist').innerHTML=(b.changes||[]).slice(0,8).map(c=>'<div><b>'+esc(c.date)+'</b> 売り '+esc(c.sell.join(', ')||'なし')+' ／ 買い '+esc(c.buy.join(', ')||'なし')+'</div>').join('')||'なし';
+ $('hist').innerHTML=(b.changes||[]).slice(0,8).map(c=>`<div><b>${esc(c.date)}</b>　売り ${esc(c.sell.join('、')||'なし')}／買い ${esc(c.buy.join('、')||'なし')}</div>`).join('')||'なし';
+ // 最初に開くタブ: 未約定の注文があれば「注文」
+ if(!userTab){let t='home';try{t=localStorage.getItem('qai_tab')||'home'}catch(e){}if(open)t='orders';show(t,false)}
 }
 async function load(force){
  try{const r=await fetch('board.json'+(force?'?t='+Date.now():''),{cache:force?'no-store':'default'});let b=await r.json();
@@ -228,7 +318,6 @@ async function load(force){
   $('lock').style.display='none';render(b);
  }catch(e){$('sub').textContent='読み込めませんでした（電波を確認してください）。'}}
 seg($('o_side'));
-document.addEventListener('click',e=>{const b=e.target.closest('.setq');if(!b)return;e.preventDefault();const el=$('a_sh'+b.dataset.i);if(el)el.value=b.dataset.q});
 getPass();load(true);
 if('serviceWorker' in navigator){let reloaded=false;
  navigator.serviceWorker.addEventListener('controllerchange',()=>{if(!reloaded){reloaded=true;location.reload()}});
