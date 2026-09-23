@@ -32,6 +32,9 @@ h2{font-size:16px;margin:0 0 6px}h3{font-size:12.5px;margin:12px 0 6px;color:var
 .pill{display:inline-flex;align-items:center;gap:4px;border-radius:999px;padding:2px 10px;font-weight:700;font-size:13px;background:var(--card2)}
 .pill.up{color:var(--up);background:var(--up2)}.pill.down{color:var(--down);background:var(--down2)}
 .chip{display:inline-block;margin-top:10px;border-radius:999px;padding:4px 12px;font-size:12.5px;background:var(--acc2);color:var(--acc);font-weight:600}
+.count{background:linear-gradient(135deg,var(--acc),#7c5cff);color:#fff;border-radius:18px;padding:16px 18px;margin:8px 0 4px;box-shadow:var(--shadow)}
+.count .lab{font-size:13px;opacity:.9}.count .big{font-size:30px;font-weight:800;letter-spacing:-.3px;line-height:1.2;margin:2px 0}
+.count .big b{font-size:44px}.count .sub{font-size:13px;opacity:.92}
 .tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0}
 .tile{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 12px;box-shadow:var(--shadow);min-width:0}
 .tile span{display:block;color:var(--mut);font-size:11.5px}.tile b{display:block;font-size:15px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -93,6 +96,7 @@ nav.tabs .dot{position:absolute;top:2px;left:calc(50% + 8px);min-width:16px;heig
 <div id="banners"></div>
 
 <section class="tab" id="t-home">
+ <div class="count" id="countdown" style="display:none"><div class="lab" id="cd_lab">次の売買まで</div><div class="big num"><span id="cd_pre">あと </span><b id="cd_days">—</b><span id="cd_unit"> 日</span></div><div class="sub" id="cd_sub"></div></div>
  <div class="hero">
   <div class="lab">評価額</div>
   <div class="val num" id="k_total">—</div>
@@ -100,7 +104,7 @@ nav.tabs .dot{position:absolute;top:2px;left:calc(50% + 8px);min-width:16px;heig
   <div class="chip" id="strat">—</div>
  </div>
  <div class="tiles">
-  <div class="tile"><span>次の点検まで</span><b class="num" id="k_next">—</b></div>
+  <button class="tile" data-go="holdings"><span>持ち株</span><b class="num" id="k_hold">—</b></button>
   <button class="tile" data-go="records"><span>口座の残金</span><b class="num" id="k_cash">—</b></button>
   <button class="tile" data-go="orders"><span>Claude の検算</span><b id="k_verify">—</b></button>
  </div>
@@ -159,7 +163,7 @@ nav.tabs .dot{position:absolute;top:2px;left:calc(50% + 8px);min-width:16px;heig
   <div class="st" id="o_msg"></div>
  </div>
  <div class="card"><h2>入れ替えの履歴</h2><div id="hist" class="mut">なし</div></div>
- <div class="foot mut"><span>価格は米国市場の前日の終値です（PC が毎日更新します）。検証済みの規則を当てはめた結果で、投資助言ではありません。画面 v12</span></div>
+ <div class="foot mut"><span>価格は米国市場の前日の終値です（PC が毎日更新します）。検証済みの規則を当てはめた結果で、投資助言ではありません。画面 v13</span></div>
 </section>
 </main>
 
@@ -273,15 +277,20 @@ function render(b){B=b;INBOX=b.inbox||'';
  // 知らせ
  let bn='';
  if(b.test)bn+='<div class="banner test"><b>テスト表示（注文しないでください）</b>本番の注文が出たときの見た目の確認用です。送信ボタンも送りません。次の PC の処理で元の画面に戻ります。</div>';
- if(b.notice)bn+=`<div class="banner info"><b>運用の開始</b>${esc(b.notice)}</div>`;
  if(b.list_note)bn+=`<div class="banner alert">${esc(b.list_note)}</div>`;
  if(b.alert)bn+=`<div class="banner alert"><b>${esc(b.alert.title)}</b>${esc(b.alert.body).replace(/\n/g,'<br>')}</div>`;
  if(b.deposit_ask)bn+='<div class="banner info"><b>今月の追加投資額を教えてください</b>「記録」の「今月の追加投資」から送ってください。 <button class="small" data-go="records">開く</button></div>';
  $('banners').innerHTML=bn;
  // ホーム
- $('k_total').textContent=b.total_jpy!=null?yen(b.total_jpy):(b.notice?'運用開始前':'—');
+ $('k_total').textContent=b.total_jpy!=null?yen(b.total_jpy):(b.next_trade&&b.next_trade.kind==='start'?'開始前':'—');
  const kr=$('k_ret');kr.textContent=pct(b.ret);kr.className='pill num '+cls(b.ret);$('k_spy').textContent=pct(b.spy_ret);
- $('k_next').textContent=(b.next_check_days??'—')+' 営業日';
+ $('k_hold').textContent=b.n_holdings?b.n_holdings+' 銘柄':'—';
+ const nt=b.next_trade,W='日月火水木金土';
+ if(nt){$('countdown').style.display='';const dd=new Date(nt.date+'T00:00:00');const ds=(dd.getMonth()+1)+'月'+dd.getDate()+'日（'+W[dd.getDay()]+'）';
+  if(nt.days<=0){$('cd_pre').textContent='';$('cd_days').textContent='今日';$('cd_unit').textContent=''}else{$('cd_pre').textContent='あと ';$('cd_days').textContent=nt.days;$('cd_unit').textContent=' 日'}
+  $('cd_lab').textContent=nt.kind==='start'?'最初の売買まで':'次の点検（銘柄の入れ替え）まで';
+  $('cd_sub').textContent=ds+'の朝 9:30 に注文をお知らせします。'+(nt.kind==='start'?'':'それまでは基本的に売買しません（月初は、送った入金の分の買い増しがあります）。')}
+ else $('countdown').style.display='none';
  $('k_cash').textContent=b.cash_jpy!=null?yen(b.cash_jpy):'—';
  const v=b.verify;$('k_verify').textContent=!v?'—':({pending:'確認中',ok:'問題なし',caution:'注意あり',incomplete:'途中まで'}[v.status]||'—');
  $('k_verify').className=v&&v.status==='ok'?'up':(v&&v.status==='caution'?'down':'');
