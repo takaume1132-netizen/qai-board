@@ -88,6 +88,7 @@ nav.tabs .dot{position:absolute;top:2px;left:calc(50% + 8px);min-width:16px;heig
  <div class="logo" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg></div>
  <div class="brand">Quant AI<small id="sub">読み込み中…</small></div>
  <div class="sp"></div>
+ <button class="iconbtn" id="curBtn" aria-label="ドルと円の切り替え" onclick="toggleCur()" style="font-weight:800;width:auto;padding:0 12px">$</button>
  <button class="iconbtn" aria-label="更新" onclick="load(true)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg></button>
 </div>
 <main>
@@ -163,7 +164,7 @@ nav.tabs .dot{position:absolute;top:2px;left:calc(50% + 8px);min-width:16px;heig
   <div class="st" id="o_msg"></div>
  </div>
  <div class="card"><h2>入れ替えの履歴</h2><div id="hist" class="mut">なし</div></div>
- <div class="foot mut"><span>価格は米国市場の前日の終値です（PC が毎日更新します）。検証済みの規則を当てはめた結果で、投資助言ではありません。画面 v16</span></div>
+ <div class="foot mut"><span>価格は米国市場の前日の終値です（PC が毎日更新します）。検証済みの規則を当てはめた結果で、投資助言ではありません。画面 v17</span></div>
 </section>
 </main>
 
@@ -182,7 +183,16 @@ const yen=x=>x==null?'—':(x<0?'−¥'+Math.round(-x).toLocaleString():'¥'+Mat
 const num=(x,d=2)=>x==null||x===''?'—':Number(x).toLocaleString(undefined,{minimumFractionDigits:d,maximumFractionDigits:d});
 const qty=x=>x==null?'—':(Math.abs(x-Math.round(x))<1e-6?String(Math.round(x)):Number(x).toFixed(2));
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-let B=null,INBOX='',userTab=false;
+let B=null,INBOX='',userTab=false,CUR='USD';
+try{CUR=localStorage.getItem('qai_cur')||'USD'}catch(e){}
+// 金額はふだんドルで、「$ / ¥」で円に切り替え（2026-09-23 利用者の指示）。ドルが無ければ円を今のドル円で割る
+function money(usd,jpy){const fx=B&&B.fx;
+ if(CUR==='JPY'){const j=jpy!=null?jpy:(usd!=null&&fx?usd*fx:null);return yen(j)}
+ const u=usd!=null?usd:(jpy!=null&&fx?jpy/fx:null);if(u==null)return '—';const a=Math.abs(u),d=a<1000?2:0;
+ return (u<0?'−$':'$')+a.toLocaleString(undefined,{minimumFractionDigits:d,maximumFractionDigits:d})}
+const other=(usd,jpy)=>{const fx=B&&B.fx;return CUR==='JPY'?(usd!=null?'$'+num(usd,0):(jpy!=null&&fx?'$'+num(jpy/fx,0):'')):(jpy!=null?yen(jpy):(usd!=null&&fx?yen(usd*fx):''))};
+const ordAmt=o=>o.amount_jpy!=null&&B.fx?o.amount_jpy/B.fx:o.amount_usd;   // 口数×値段にそろえる
+function toggleCur(){CUR=CUR==='USD'?'JPY':'USD';try{localStorage.setItem('qai_cur',CUR)}catch(e){}if(B)render(B)}
 // ---- タブ
 function show(t,byUser){document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x.id==='t-'+t));
  document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===t));
@@ -212,9 +222,9 @@ function vitem(t){const v=B.verify;if(!v)return null;if(v.status==='pending')ret
 function orderHtml(o,i){
  const sell=o.side.includes('売'),opt=o.side.includes('選択肢'),key=(B.orders_date||'')+'|'+o.ticker+'|'+i,sent=sentLog()[key],v=vitem(o.ticker);
  const rec=o.fund
-  ?`<div class="rec"><div><span>推奨の指値</span><b>—</b></div><div><span>口数</span><b>金額で</b></div><div><span>金額</span><b>${yen(o.amount_jpy)}</b></div></div>`
-  :`<div class="rec"><div><span>推奨の指値</span><b>${o.limit!=null?'$'+num(o.limit):'成行'}</b></div><div><span>口数</span><b>${esc(o.shares??'—')}</b></div><div><span>金額の目安</span><b>${yen(o.amount_jpy)}</b></div></div>`;
- const whole=o.shares_whole!=null?`<div class="note">端株が使えない場合は <b>${o.shares_whole}株</b>です（${yen(o.amount_jpy_whole)}）。差額は翌月末に回します。 <button class="small setq" data-i="${i}" data-q="${o.shares_whole}">1株単位にする</button> <button class="small setq" data-i="${i}" data-q="${esc(o.shares)}">端株に戻す</button></div>`:'';
+  ?`<div class="rec"><div><span>推奨の指値</span><b>—</b></div><div><span>口数</span><b>金額で</b></div><div><span>金額</span><b>${money(ordAmt(o),o.amount_jpy)}</b></div></div>`
+  :`<div class="rec"><div><span>推奨の指値</span><b>${o.limit!=null?'$'+num(o.limit):'成行'}</b></div><div><span>口数</span><b>${esc(o.shares??'—')}</b></div><div><span>金額の目安</span><b>${money(ordAmt(o),o.amount_jpy)}</b></div></div>`;
+ const whole=o.shares_whole!=null?`<div class="note">端株が使えない場合は <b>${o.shares_whole}株</b>です（${money(o.amount_usd_whole,o.amount_jpy_whole)}）。差額は翌月末に回します。 <button class="small setq" data-i="${i}" data-q="${o.shares_whole}">1株単位にする</button> <button class="small setq" data-i="${i}" data-q="${esc(o.shares)}">端株に戻す</button></div>`:'';
  const inputs=o.fund
   ?`<div class="act"><label>銘柄<input value="CORE（投信）" disabled></label><label>購入額（円）<input id="a_px${i}" inputmode="numeric" value="${o.amount_jpy??''}"></label><label>口数<input value="—" disabled></label></div>`
   :`<div class="act"><label>銘柄<input id="a_tk${i}" value="${esc(o.ticker)}" autocapitalize="characters"></label><label>${sell?'売却値':'購入値'}（ドル）<input id="a_px${i}" inputmode="decimal" value="${o.limit??''}"></label><label>口数<input id="a_sh${i}" inputmode="decimal" value="${typeof o.shares==='number'?o.shares:(o.held??'')}"></label></div>`;
@@ -250,7 +260,9 @@ async function sendOther(){const t=$('o_tk').value.trim().toUpperCase(),px=$('o_
  const [ok,m]=await post(text);msgTo('o_msg',m,ok)}
 async function sendDeposit(){const c=$('f_dep').value.trim().replace(/[,，¥]/g,'');if(!c||isNaN(+c))return msgTo('d_msg','今月の追加投資額（円）を入れてください。',false);const [ok,m]=await post('入金 '+c);msgTo('d_msg',m,ok)}
 async function cashOk(){const [ok,m]=await post('残金確認 OK');msgTo('c_msg',ok?'合っていることを送りました。':m,ok)}
-async function sendCashJpy(){const c=$('f_cashjpy').value.trim().replace(/[,，¥]/g,'');if(!c||isNaN(+c))return msgTo('c_msg','実際の残金（円）を入れてください。',false);const [ok,m]=await post('残金 '+c);msgTo('c_msg',m,ok)}
+async function sendCashJpy(){const c=$('f_cashjpy').value.trim().replace(/[,，¥$]/g,'');
+ if(!c||isNaN(+c))return msgTo('c_msg',CUR==='USD'?'実際の残金（ドル）を入れてください。':'実際の残金（円）を入れてください。',false);
+ const [ok,m]=await post(CUR==='USD'?'CASH '+c:'残金 '+c);msgTo('c_msg',m,ok)}
 // ---- 推移
 let CV=[],LO=0,HI=1;
 const X=i=>CV.length<2?0:6+(i/(CV.length-1))*308, Y=v=>160-((v-LO)/((HI-LO)||1))*146;
@@ -270,10 +282,10 @@ function pickAt(ev){if(CV.length<2)return;const r=$('chart').getBoundingClientRe
  showSel(Math.max(0,Math.min(CV.length-1,Math.round((x-6)/308*(CV.length-1)))))}
 function showSel(i){const p=CV[i],el=$('sel');if(!p){el.innerHTML='';return}
  const cx=$('cx'),cd=$('cd');if(cx){cx.setAttribute('x1',X(i));cx.setAttribute('x2',X(i));cd.setAttribute('cx',X(i));cd.setAttribute('cy',Y(p.v))}
- let h=`<b>${p.date}</b>：この運用 ${p.v.toFixed(1)}${p.spy!=null?'（S&amp;P500 '+p.spy.toFixed(1)+'）':''}${p.total_jpy!=null?'、評価額 '+yen(p.total_jpy):''}`;
+ let h=`<b>${p.date}</b>：この運用 ${p.v.toFixed(1)}${p.spy!=null?'（S&amp;P500 '+p.spy.toFixed(1)+'）':''}${p.total_jpy!=null?'、評価額 '+money(p.total_usd,p.total_jpy):''}`;
  if(p.h){const nm=B.names||{};h+='<table style="margin-top:6px"><thead><tr><th>その日の持ち株</th><th class="n">口数</th><th class="n">金額</th></tr></thead><tbody>'
-  +p.h.map(r=>`<tr><td><b>${esc(r[0])}</b> <span class="mut">${esc(nm[r[0]]||'')}</span></td><td class="n">${qty(r[1])}</td><td class="n">${yen(r[2])}</td></tr>`).join('')
-  +(p.cash_jpy!=null?`<tr><td>現金</td><td></td><td class="n">${yen(p.cash_jpy)}</td></tr>`:'')+'</tbody></table>'}
+  +p.h.map(r=>`<tr><td><b>${esc(r[0])}</b> <span class="mut">${esc(nm[r[0]]||'')}</span></td><td class="n">${qty(r[1])}</td><td class="n">${money(r[3],r[2])}</td></tr>`).join('')
+  +(p.cash_jpy!=null?`<tr><td>現金</td><td></td><td class="n">${money(p.cash_usd,p.cash_jpy)}</td></tr>`:'')+'</tbody></table>'}
  el.innerHTML=h}
 ['mousedown','mousemove','touchstart','touchmove'].forEach(t=>$('chart').addEventListener(t,e=>{if(t==='mousemove'&&!e.buttons)return;pickAt(e)},{passive:true}));
 // ---- 表示
@@ -290,7 +302,8 @@ function render(b){B=b;INBOX=b.inbox||'';
  if(b.deposit_ask)bn+='<div class="banner info"><b>今月の追加投資額を教えてください</b>「記録」の「今月の追加投資」から送ってください。 <button class="small" data-go="records">開く</button></div>';
  $('banners').innerHTML=bn;
  // ホーム
- $('k_total').textContent=b.total_jpy!=null?yen(b.total_jpy):(b.next_trade&&b.next_trade.kind==='start'?'開始前':'—');
+ $('curBtn').textContent=CUR==='USD'?'$':'¥';
+ $('k_total').textContent=b.total_jpy!=null?money(b.total_usd,b.total_jpy):(b.next_trade&&b.next_trade.kind==='start'?'開始前':'—');
  const kr=$('k_ret');kr.textContent=pct(b.ret);kr.className='pill num '+cls(b.ret);$('k_spy').textContent=pct(b.spy_ret);
  $('k_hold').textContent=b.n_holdings?b.n_holdings+' 銘柄':'—';
  const nt=b.next_trade,W='日月火水木金土';
@@ -299,7 +312,7 @@ function render(b){B=b;INBOX=b.inbox||'';
   $('cd_lab').textContent=nt.kind==='start'?'最初の売買まで':'次の点検（銘柄の入れ替え）まで';
   $('cd_sub').textContent=ds+'の朝 9:30 に注文をお知らせします。'+(nt.kind==='start'?'':'それまでは基本的に売買しません（月初は、送った入金の分の買い増しがあります）。')}
  else $('countdown').style.display='none';
- $('k_cash').textContent=b.cash_jpy!=null?yen(b.cash_jpy):'—';
+ $('k_cash').textContent=b.cash_jpy!=null?money(b.cash_usd,b.cash_jpy):'—';
  const v=b.verify;$('k_verify').textContent=!v?'—':({pending:'確認中',ok:'問題なし',caution:'注意あり',incomplete:'途中まで'}[v.status]||'—');
  $('k_verify').className=v&&v.status==='ok'?'up':(v&&v.status==='caution'?'down':'');
  $('curveNote').textContent=b.curve_kind==='actual'?('最初の約定（'+(b.curve_start||'')+'）を 100 としています。入金の分は除いて測ります。'):'';
@@ -316,13 +329,14 @@ function render(b){B=b;INBOX=b.inbox||'';
  $('basis').textContent=b.curve_kind==='actual'?(b.basis||''):'';const nm=b.names||{};
  $('hlist').innerHTML=(b.holdings||[]).map(h=>`<div class="hrow"><div class="av" style="background:${avColor(h.ticker)}">${esc(h.ticker.slice(0,4))}</div>
    <div class="hmid"><b>${esc(h.ticker)}</b><span>${esc(h.name||nm[h.ticker]||'')}</span><span class="num">${h.shares!=null?qty(h.shares)+' 株':''}　比率 ${(h.weight*100).toFixed(1)}%</span><div class="bar"><i style="width:${Math.min(100,h.weight*100*2.5)}%"></i></div></div>
-   <div class="hright num"><b>${yen(h.value_jpy)}</b><span class="${cls(h.gain)}">${pct(h.gain,1)}</span></div></div>`).join('')
+   <div class="hright num"><b>${money(h.value_usd,h.value_jpy)}</b><span class="${cls(h.gain)}">${pct(h.gain,1)}</span></div></div>`).join('')
   ||'<div class="empty">—</div>';
- $('cash').textContent=(b.cash_jpy!=null?'現金 '+yen(b.cash_jpy)+(b.cash_usd!=null?'（'+num(b.cash_usd,0)+' ドル）':''):'')+(b.pending?'／注文待ち：'+b.pending:'');
+ $('cash').textContent=(b.cash_jpy!=null?'現金 '+money(b.cash_usd,b.cash_jpy):'')+(b.pending?'／注文待ち：'+b.pending:'');
  // 記録
- $('cashPc').textContent=b.cash_jpy!=null?('PC の計算：'+yen(b.cash_jpy)+'（'+num(b.cash_usd,0)+' ドル）'):'—';
+ $('cashPc').textContent=b.cash_jpy!=null?('PC の計算：'+money(b.cash_usd,b.cash_jpy)+'（'+other(b.cash_usd,b.cash_jpy)+'）'):'—';
+ $('f_cashjpy').placeholder=CUR==='USD'?'違う場合：実際の残金（ドル）':'違う場合：実際の残金（円）';
  const ck=b.cash_check;
- $('cashLast').textContent=!ck?'':('前回の確認：'+ck.date+(ck.actual_jpy==null?'、一致していました。':('、PC の計算 '+yen(ck.pc_jpy)+'、実際 '+yen(ck.actual_jpy)+'（PC の計算より '+yen(Math.abs(ck.diff))+(ck.diff<0?' 少ない':' 多い')+'）。実際の値に合わせました。')));
+ $('cashLast').textContent=!ck?'':('前回の確認：'+ck.date+(ck.actual_jpy==null?'、一致していました。':('、PC の計算 '+money(null,ck.pc_jpy)+'、実際 '+money(null,ck.actual_jpy)+'（PC の計算より '+money(null,Math.abs(ck.diff))+(ck.diff<0?' 少ない':' 多い')+'）。実際の値に合わせました。')));
  $('depCard').style.border=b.deposit_ask?'2px solid var(--acc)':'';$('dot-records').style.display=b.deposit_ask?'':'none';
  $('depNote').textContent=(b.deposit_pending_jpy>0?'受け取った入金：'+yen(b.deposit_pending_jpy)+'（次の処理で買い増しの指示を出します）。':'');
  $('hist').innerHTML=(b.changes||[]).slice(0,8).map(c=>`<div><b>${esc(c.date)}</b>　売り ${esc(c.sell.join('、')||'なし')}／買い ${esc(c.buy.join('、')||'なし')}</div>`).join('')||'なし';
