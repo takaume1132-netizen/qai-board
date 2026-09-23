@@ -163,7 +163,7 @@ nav.tabs .dot{position:absolute;top:2px;left:calc(50% + 8px);min-width:16px;heig
   <div class="st" id="o_msg"></div>
  </div>
  <div class="card"><h2>入れ替えの履歴</h2><div id="hist" class="mut">なし</div></div>
- <div class="foot mut"><span>価格は米国市場の前日の終値です（PC が毎日更新します）。検証済みの規則を当てはめた結果で、投資助言ではありません。画面 v15</span></div>
+ <div class="foot mut"><span>価格は米国市場の前日の終値です（PC が毎日更新します）。検証済みの規則を当てはめた結果で、投資助言ではありません。画面 v16</span></div>
 </section>
 </main>
 
@@ -219,7 +219,10 @@ function orderHtml(o,i){
   ?`<div class="act"><label>銘柄<input value="CORE（投信）" disabled></label><label>購入額（円）<input id="a_px${i}" inputmode="numeric" value="${o.amount_jpy??''}"></label><label>口数<input value="—" disabled></label></div>`
   :`<div class="act"><label>銘柄<input id="a_tk${i}" value="${esc(o.ticker)}" autocapitalize="characters"></label><label>${sell?'売却値':'購入値'}（ドル）<input id="a_px${i}" inputmode="decimal" value="${o.limit??''}"></label><label>口数<input id="a_sh${i}" inputmode="decimal" value="${typeof o.shares==='number'?o.shares:(o.held??'')}"></label></div>`;
  const hint=o.fund?'投資信託は金額で注文します。':(Number.isInteger(Number(o.shares))?'1株単位で注文し、買えた口数を送信してください。':'端株（小数）で注文してください。端株が使えない場合は1株単位で買い、その口数を送信してください。');
- const st=o.filled?'<div class="st ok">PC が取り込み済みです。</div>':(sent?`<div class="st ok">送信済み（${esc(sent)}）。PC の次の処理で取り込みます。</div>`:'');
+ const uf=(B.unfilled||{})[o.ticker],sk=(B.skipped||[]).includes(o.ticker);
+ const st=o.filled?'<div class="st ok">PC が取り込み済みです。</div>':(sk?'<div class="st ng">3日続けて買えなかったので見送りました。現金は月初の買い付けで次の銘柄に回します。</div>'
+   :(uf?`<div class="st ng">「${sell?'売れなかった':'買えなかった'}」を受け付けました（${uf}回目）。次の朝、新しい指値で出し直します。</div>`
+   :(sent?`<div class="st ok">送信済み（${esc(sent)}）。PC の次の処理で取り込みます。</div>`:'')));
  const vh=v?`<span class="vchip ${v.verdict}">${VLAB[v.verdict]}</span>`:'';
  const vnote=v&&v.note?`<div class="note">${esc(v.note)}</div>`:'';
  return `<div class="ord${opt?' opt':''}" ${o.filled?'style="opacity:.6"':''}>
@@ -228,7 +231,10 @@ function orderHtml(o,i){
   ${opt&&o.reason?`<div class="note">${esc(o.reason)}</div>`:''}
   ${rec}${whole}<h3>実際に${sell?'売った':'買った'}内容</h3>${inputs}
   <div class="act2"><span class="note" style="flex:1;margin:0">${hint}</span><button class="p" data-send="${i}">送信</button></div>
+  ${opt?'':`<div class="act2"><button class="small" data-miss="${i}">${sell?'売れなかった':'買えなかった'}（寄付が指値を超えた）</button></div>`}
   <div class="st" id="a_msg${i}"></div>${st}</div>`}
+document.addEventListener('click',async e=>{const x=e.target.closest('[data-miss]');if(!x)return;e.preventDefault();
+ const i=+x.dataset.miss,o=B.orders[i];const [ok,m]=await post('未約定 '+o.ticker);msgTo('a_msg'+i,ok?'受け付けました。次の朝、新しい指値で出し直します（最大3日）。':m,ok)});
 document.addEventListener('click',e=>{const b=e.target.closest('.setq');if(b){e.preventDefault();const el=$('a_sh'+b.dataset.i);if(el)el.value=b.dataset.q}
  const s=e.target.closest('[data-send]');if(s){e.preventDefault();sendOrder(+s.dataset.send)}});
 async function sendOrder(i){const o=B.orders[i],side=o.side.includes('売')?'売':'買';let text;
@@ -301,7 +307,7 @@ function render(b){B=b;INBOX=b.inbox||'';
  // 注文
  const orders=b.orders||[];const open=orders.filter(o=>!o.filled&&!o.side.includes('選択肢')).length;
  const dot=$('dot-orders');dot.style.display=open?'':'none';dot.textContent=open;
- $('ordersNote').textContent=orders.length?((b.orders_date||'')+' の指示です。米国市場の寄付（日本時間 22:30、冬は 23:30）に指値で注文してください。売りを先にします。買えたら、下の「実際に買った内容」を直して送信してください。1株単位の余りや買えなかった分は、翌月末の買い付けに自動で回します。'):'いま出ている注文はありません。';
+ $('ordersNote').textContent=orders.length?((b.orders_date||'')+' の指示です。米国市場の寄付（日本時間 22:30、冬は 23:30）に指値で注文してください。売りを先にします。'+(b.limit_note||'')+'寄付が指値を超えて始まったら追いかけず、「買えなかった」を押してください（次の朝に出し直し、最大3日）。買えたら「実際に買った内容」を直して送信してください。'):'いま出ている注文はありません。';
  $('verifyBox').innerHTML=!v?'':(v.status==='pending'?'<div class="banner info"><b>Claude が検算中です</b>注文の銘柄を、報道と数字の両面で確かめています。結果は通知でも知らせます。</div>'
    :`<div class="banner ${v.status==='ok'?'info':'alert'}"><b>Claude の検算：${({ok:'問題なし',caution:'注意あり',incomplete:'途中まで'})[v.status]||''}</b>${esc(v.summary||'')}${v.checked_at?'<div class="mut">'+esc(v.checked_at.replace('T',' ').slice(0,16))+' 確認</div>':''}</div>`);
  $('orders').innerHTML=orders.length?orders.map(orderHtml).join(''):'';
