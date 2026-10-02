@@ -170,7 +170,7 @@ nav.tabs .dot{position:absolute;top:2px;left:calc(50% + 8px);min-width:16px;heig
   <div class="note">間違えて送った記録は「取り消す」を押し、正しい内容を送り直してください。PC の次の処理（9:30・21:00）で、持ち株と残金が直ります。</div>
   <div id="sentList" class="mut">まだありません。</div><div class="note" id="cancelNote"></div><div class="st" id="x_msg"></div></div>
  <div class="card"><h2>入れ替えの履歴</h2><div id="hist" class="mut">なし</div></div>
- <div class="foot mut"><span>価格は米国市場の前日の終値です（PC が毎日更新します）。検証済みの規則を当てはめた結果で、投資助言ではありません。画面 v23</span></div>
+ <div class="foot mut"><span>価格は米国市場の前日の終値です（PC が毎日更新します）。検証済みの規則を当てはめた結果で、投資助言ではありません。画面 v24</span></div>
 </section>
 </main>
 
@@ -357,7 +357,7 @@ function render(b){B=b;INBOX=b.inbox||'';
  const fxn=b.fx_need,fxb=fxn&&orders.length?(fxn.need_usd>0
    ?`<div class="banner"><b>円からドルに替える額：約 $${num(fxn.need_usd,0)}（約 ${yen(fxn.need_jpy)}）</b>買いの合計は指値いっぱいで $${num(fxn.buy_usd,0)}、ドルの残金は $${num(fxn.usd_cash,0)}${fxn.sell_usd>0?`、売りの代金の見込みは $${num(fxn.sell_usd,0)}です。売りが約定しなかった時に備えるなら $${num(fxn.need_usd_nosell,0)}`:''}です。</div>`
    :`<div class="banner"><b>円からドルに替える必要はありません</b>ドルの残金${fxn.sell_usd>0?'と売りの代金':''}で足ります。</div>`):'';
- $('verifyBox').innerHTML=fxb+(unc?'<div class="banner alert"><b>残金が照合されていません</b>注文の合計が口座の残金を超えていないか、moomoo で確かめてから注文してください（「記録」の「口座の残金の確認」で照合できます）。</div>':'')+(!v?'':(v.status==='pending'?'<div class="banner info"><b>Claude が検算中です</b>注文の銘柄を、報道と数字の両面で確かめています。結果は通知でも知らせます。</div>'
+ $('verifyBox').innerHTML=fxb+(unc?'<div class="banner alert"><b>残金が照合されていません</b>注文の合計が口座の残金を超えていないか、moomoo で確かめてから注文してください（「記録」の「口座の残金の確認」で照合できます）。</div>':'')+(!v?'':(v.status==='pending'?'<div class="banner alert"><b>Claude の検算が終わるまで、注文しないでください</b>結果が届くと、通知と画面に出ます（「注文の時間です」の知らせも検算の後に届きます）。</div>'
    :`<div class="banner ${v.status==='ok'?'info':'alert'}"><b>Claude の検算：${({ok:'問題なし',caution:'注意あり',incomplete:'途中まで'})[v.status]||''}</b>${esc(v.summary||'')}${v.checked_at?'<div class="mut">'+esc(v.checked_at.replace('T',' ').slice(0,16))+' 確認</div>':''}</div>`));
  $('orders').innerHTML=orders.length?orders.map(orderHtml).join(''):'';
  $('orders').parentElement.style.display=orders.length?'':'none';
