@@ -166,7 +166,7 @@ nav.tabs .dot{position:absolute;top:2px;left:calc(50% + 8px);min-width:16px;heig
   <div class="st" id="o_msg"></div>
  </div>
  <div class="card"><h2>入れ替えの履歴</h2><div id="hist" class="mut">なし</div></div>
- <div class="foot mut"><span>価格は米国市場の前日の終値です（PC が毎日更新します）。検証済みの規則を当てはめた結果で、投資助言ではありません。画面 v20</span></div>
+ <div class="foot mut"><span>価格は米国市場の前日の終値です（PC が毎日更新します）。検証済みの規則を当てはめた結果で、投資助言ではありません。画面 v21</span></div>
 </section>
 </main>
 
@@ -225,7 +225,8 @@ function orderHtml(o,i){
  const sell=o.side.includes('売'),opt=o.side.includes('選択肢'),key=(B.orders_date||'')+'|'+o.ticker+'|'+i,sent=sentLog()[key],v=vitem(o.ticker);
  const rec=o.fund
   ?`<div class="rec"><div><span>推奨の指値</span><b>—</b></div><div><span>口数</span><b>金額で</b></div><div><span>金額</span><b>${money(ordAmt(o),o.amount_jpy)}</b></div></div>`
-  :`<div class="rec"><div><span>推奨の指値</span><b>${o.limit!=null?'$'+num(o.limit):'成行'}</b></div><div><span>口数</span><b>${esc(o.shares??'—')}</b></div><div><span>金額の目安</span><b>${money(ordAmt(o),o.amount_jpy)}</b></div></div>`;
+  :`<div class="rec"><div><span>推奨の指値</span><b>${o.limit!=null?'$'+num(o.limit):'成行'}</b></div><div><span>口数</span><b>${esc(o.shares??'—')}</b></div><div><span>金額の目安（終値で）</span><b>${money(ordAmt(o),o.amount_jpy)}</b></div></div>`
+   +(!o.side.includes('売')&&typeof o.shares==='number'&&o.limit?`<div class="note">金額の目安は前日の終値（$${num(o.last)}）× 口数です。指値（上限）いっぱいで約定すると、最大 ${money(o.shares*o.limit,B.fx?o.shares*o.limit*B.fx:null)} です。</div>`:'');
  const whole=o.shares_whole!=null?`<div class="note">端株が使えない場合は <b>${o.shares_whole}株</b>です（${money(o.amount_usd_whole,o.amount_jpy_whole)}）。差額は翌月末に回します。 <button class="small setq" data-i="${i}" data-q="${o.shares_whole}">1株単位にする</button> <button class="small setq" data-i="${i}" data-q="${esc(o.shares)}">端株に戻す</button></div>`:'';
  const inputs=o.fund
   ?`<div class="act"><label>銘柄<input value="CORE（投信）" disabled></label><label>購入額（円）<input id="a_px${i}" inputmode="numeric" value="${o.amount_jpy??''}"></label><label>口数<input value="—" disabled></label></div>`
