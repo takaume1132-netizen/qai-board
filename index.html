@@ -166,7 +166,7 @@ nav.tabs .dot{position:absolute;top:2px;left:calc(50% + 8px);min-width:16px;heig
   <div class="st" id="o_msg"></div>
  </div>
  <div class="card"><h2>入れ替えの履歴</h2><div id="hist" class="mut">なし</div></div>
- <div class="foot mut"><span>価格は米国市場の前日の終値です（PC が毎日更新します）。検証済みの規則を当てはめた結果で、投資助言ではありません。画面 v21</span></div>
+ <div class="foot mut"><span>価格は米国市場の前日の終値です（PC が毎日更新します）。検証済みの規則を当てはめた結果で、投資助言ではありません。画面 v22</span></div>
 </section>
 </main>
 
@@ -213,7 +213,8 @@ async function decrypt(blob,pass){const te=new TextEncoder();const b64=s=>Uint8A
 function sentLog(){try{return JSON.parse(localStorage.getItem('qai_sent')||'{}')}catch(e){return {}}}
 function markSent(k,t){const s=sentLog();s[k]=t;try{localStorage.setItem('qai_sent',JSON.stringify(s))}catch(e){}}
 async function post(text){if(B&&B.test)return [false,'テスト表示中なので送信しません（本番では PC に送られます）：'+text];if(!INBOX)return [false,'受信先が未設定です。'];
- try{const r=await fetch('https://ntfy.sh/'+INBOX,{method:'POST',body:text,headers:{'Title':'約定','Priority':'2'}});return [r.ok,r.ok?'送りました：'+text:'送れませんでした。']}
+ // 2026-10-02 訂正: 見出し（Title）に日本語を入れると、ブラウザが送信そのものを止めていた（一度も届いていなかった）。題は URL で渡す
+ try{const r=await fetch('https://ntfy.sh/'+INBOX+'?title='+encodeURIComponent('約定'),{method:'POST',body:text,headers:{'Priority':'2'}});return [r.ok,r.ok?'送りました：'+text:'送れませんでした。']}
  catch(e){return [false,'送れませんでした（電波を確認してください）。']}}
 function msgTo(id,t,ok){const m=$(id);m.textContent=t;m.className='st '+(ok?'ok':'ng')}
 function seg(el){el.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;e.preventDefault();[...el.children].forEach(x=>x.classList.toggle('on',x===b))})}
