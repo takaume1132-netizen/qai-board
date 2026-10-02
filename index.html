@@ -24,6 +24,7 @@ body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.5 system-ui,-appl
 .top .sp{flex:1}.iconbtn{width:36px;height:36px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--fg);display:grid;place-items:center}
 main{padding:0 16px calc(84px + env(safe-area-inset-bottom));max-width:640px;margin:0 auto}
 .tab{display:none}.tab.on{display:block}
+.srow{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--line)}.srow:last-child{border-bottom:0}
 .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 16px;margin:12px 0;box-shadow:var(--shadow)}
 h2{font-size:16px;margin:0 0 6px}h3{font-size:12.5px;margin:12px 0 6px;color:var(--mut);font-weight:600}
 .mut{color:var(--mut);font-size:12.5px}.note{font-size:12.5px;color:var(--mut);margin-top:6px}
@@ -165,8 +166,11 @@ nav.tabs .dot{position:absolute;top:2px;left:calc(50% + 8px);min-width:16px;heig
   <div class="note">銘柄はティッカー（例：SM、TQQQ）、値段は1株のドル、口数は株数（端株は小数）で入れてください。投資信託は記録できません。</div>
   <div class="st" id="o_msg"></div>
  </div>
+ <div class="card"><h2>送った記録（間違えたら取り消す）</h2>
+  <div class="note">間違えて送った記録は「取り消す」を押し、正しい内容を送り直してください。PC の次の処理（9:30・21:00）で、持ち株と残金が直ります。</div>
+  <div id="sentList" class="mut">まだありません。</div><div class="note" id="cancelNote"></div><div class="st" id="x_msg"></div></div>
  <div class="card"><h2>入れ替えの履歴</h2><div id="hist" class="mut">なし</div></div>
- <div class="foot mut"><span>価格は米国市場の前日の終値です（PC が毎日更新します）。検証済みの規則を当てはめた結果で、投資助言ではありません。画面 v22</span></div>
+ <div class="foot mut"><span>価格は米国市場の前日の終値です（PC が毎日更新します）。検証済みの規則を当てはめた結果で、投資助言ではありません。画面 v23</span></div>
 </section>
 </main>
 
@@ -210,11 +214,32 @@ async function decrypt(blob,pass){const te=new TextEncoder();const b64=s=>Uint8A
  const key=await crypto.subtle.deriveKey({name:'PBKDF2',salt:b64(blob.salt),iterations:blob.iter,hash:'SHA-256'},km,{name:'AES-GCM',length:256},false,['decrypt']);
  const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:b64(blob.iv)},key,b64(blob.ct));return JSON.parse(new TextDecoder().decode(pt))}
 // ---- 送信
+// ---- 送った記録（2026-10-02 利用者「入力を間違えたときに訂正できるところも欲しい」）
+function sends(){try{return JSON.parse(localStorage.getItem('qai_sends')||'[]')}catch(e){return []}}
+function saveSends(a){try{localStorage.setItem('qai_sends',JSON.stringify(a.slice(-40)))}catch(e){}}
+function addSend(x){const a=sends();a.push(x);saveSends(a)}
+function fillText(f){const sh=f.shares,px=f.price;if(f.ticker==='DEPOSIT')return '入金 '+yen(+f.jpy);if(f.ticker==='CASHDUAL')return '残金 円 '+yen(+f.jpy)+'／$'+num(+sh,2);
+ if(f.ticker==='CASHJPY')return '残金 '+yen(+sh);if(f.ticker==='CASH')return '残金 $'+num(+sh,2);if(f.ticker==='CASHOK')return '残金は合っている';
+ return f.ticker+' '+(f.side==='sell'?'売':'買')+' '+sh+'株 $'+num(+px,2)}
+function renderSends(b){const pc={};for(const f of (b.fills_recent||[]))pc[f.id]=f;const canc=new Set(b.canceled||[]);const items=[],ids=new Set();
+ for(const x of sends().slice().reverse()){if(!x.id||String(x.text).startsWith('取消'))continue;ids.add(x.id);
+  items.push({id:x.id,text:x.text,when:new Date(x.at).toLocaleString('ja-JP',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}),pc:!!pc[x.id],canceled:!!x.canceled||canc.has(x.id)})}
+ for(const f of (b.fills_recent||[]).slice().reverse()){if(ids.has(f.id))continue;items.push({id:f.id,text:fillText(f),when:f.date,pc:true,canceled:canc.has(f.id)})}
+ $('sentList').innerHTML=items.length?items.slice(0,20).map(x=>`<div class="srow"><div><b>${esc(x.text)}</b><div class="mut">${esc(x.when||'')}・${x.canceled?'取り消し済み':(x.pc?'PC に記録済み':'PC の次の処理で取り込みます')}</div></div>${x.canceled?'':`<button class="small" data-cancel="${esc(x.id)}" data-text="${esc(x.text)}">取り消す</button>`}</div>`).join(''):'まだありません。';
+ const lc=b.last_cancel;$('cancelNote').textContent=lc&&!lc.found?'最後の取り消し（'+lc.date+'）は、取り消す記録が見つかりませんでした（すでに取り消し済みか、別の記録です）。':''}
+document.addEventListener('click',async e=>{const x=e.target.closest('[data-cancel]');if(!x)return;e.preventDefault();
+ if(!confirm('この記録を取り消しますか？（'+x.dataset.text+'）'))return;
+ const [ok,m]=await post('取消 '+x.dataset.cancel);
+ if(ok){const a=sends();for(const s of a)if(s.id===x.dataset.cancel)s.canceled=true;saveSends(a);renderSends(B)}
+ msgTo('x_msg',ok?'取り消しを送りました。正しい内容を送り直してください（PC の次の処理で直ります）。':m,ok)});
 function sentLog(){try{return JSON.parse(localStorage.getItem('qai_sent')||'{}')}catch(e){return {}}}
 function markSent(k,t){const s=sentLog();s[k]=t;try{localStorage.setItem('qai_sent',JSON.stringify(s))}catch(e){}}
 async function post(text){if(B&&B.test)return [false,'テスト表示中なので送信しません（本番では PC に送られます）：'+text];if(!INBOX)return [false,'受信先が未設定です。'];
  // 2026-10-02 訂正: 見出し（Title）に日本語を入れると、ブラウザが送信そのものを止めていた（一度も届いていなかった）。題は URL で渡す
- try{const r=await fetch('https://ntfy.sh/'+INBOX+'?title='+encodeURIComponent('約定'),{method:'POST',body:text,headers:{'Priority':'2'}});return [r.ok,r.ok?'送りました：'+text:'送れませんでした。']}
+ try{const r=await fetch('https://ntfy.sh/'+INBOX+'?title='+encodeURIComponent('約定'),{method:'POST',body:text,headers:{'Priority':'2'}});
+  let id=null;try{id=(await r.clone().json()).id}catch(e){}
+  if(r.ok&&id)addSend({id:id,text:text,at:Date.now()});
+  return [r.ok,r.ok?'送りました：'+text:'送れませんでした。',id]}
  catch(e){return [false,'送れませんでした（電波を確認してください）。']}}
 function msgTo(id,t,ok){const m=$(id);m.textContent=t;m.className='st '+(ok?'ok':'ng')}
 function seg(el){el.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;e.preventDefault();[...el.children].forEach(x=>x.classList.toggle('on',x===b))})}
@@ -351,6 +376,7 @@ function render(b){B=b;INBOX=b.inbox||'';
  $('cashLast').textContent=!ck?'':('前回の確認：'+ck.date+(ck.actual_jpy==null?'、一致していました。':('、PC の計算 '+money(null,ck.pc_jpy)+'、実際 '+money(null,ck.actual_jpy)+'（PC の計算より '+money(null,Math.abs(ck.diff))+(ck.diff<0?' 少ない':' 多い')+'）。実際の値に合わせました。')));
  $('depCard').style.border=b.deposit_ask?'2px solid var(--acc)':'';$('dot-records').style.display=b.deposit_ask?'':'none';
  $('depNote').textContent=(b.deposit_pending_jpy>0?'受け取った入金：'+yen(b.deposit_pending_jpy)+'（次の処理で買い増しの指示を出します）。':'');
+ renderSends(b);
  $('hist').innerHTML=(b.changes||[]).slice(0,8).map(c=>`<div><b>${esc(c.date)}</b>　売り ${esc(c.sell.join('、')||'なし')}／買い ${esc(c.buy.join('、')||'なし')}</div>`).join('')||'なし';
  // 最初に開くタブ: 未約定の注文があれば「注文」
  if(!userTab){let t='home';try{t=localStorage.getItem('qai_tab')||'home'}catch(e){}if(open)t='orders';show(t,false)}
