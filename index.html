@@ -236,7 +236,7 @@ nav.tabs .dot{position:absolute;top:-2px;left:calc(50% + 10px);min-width:18px;he
   <div class="note" style="margin-top:0">間違えて送った記録は「取り消す」を押し、正しい内容を送り直してください。次の朝の処理（10 時ごろ）で、持ち株と残金が直ります。</div>
   <div id="sentList" class="mut">まだありません。</div><div class="note" id="cancelNote"></div><div class="st" id="x_msg"></div></div>
  <div class="card"><div class="ct"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg></span>入れ替えの履歴</div><div id="hist" class="mut">なし</div></div>
- <div class="foot">価格は米国市場の前日の終値です（クラウドが毎朝更新します）。検証済みの規則を当てはめた結果で、投資助言ではありません。画面 v26</div>
+ <div class="foot">価格は米国市場の前日の終値です（クラウドが毎朝更新します）。検証済みの規則を当てはめた結果で、投資助言ではありません。画面 v27</div>
 </section>
 </main>
 
@@ -361,7 +361,6 @@ function orderHtml(o,i){
   <div class="sendbox"><div class="sh">実際に${sell?'売った':'買った'}内容を送る</div>${inputs}
   <div class="note" style="margin-top:6px">${hint}</div>
   <div class="btns">${opt?'':`<button class="ghost grow" data-miss="${i}">${sell?'売れなかった':'買えなかった'}</button>`}<button class="p grow" data-send="${i}">送信</button></div>
-  ${opt?'':`<div class="mut" style="margin-top:6px">「${sell?'売れなかった':'買えなかった'}」は、寄付が指値を超えて始まった時に押します。</div>`}
   <div class="st" id="a_msg${i}"></div>${st}</div></article>`}
 document.addEventListener('click',async e=>{const x=e.target.closest('[data-avoid]');if(!x)return;e.preventDefault();
  const i=+x.dataset.avoid,o=B.orders[i];const [ok,m]=await post('見送り '+o.ticker);msgTo('a_msg'+i,ok?'見送りを送りました。次の朝、次の順位の銘柄に置き換えた注文を出します。':m,ok);
@@ -405,8 +404,8 @@ function renderSteps(b){const orders=b.orders||[];$('flowCard').style.display=or
  else if(fx&&fx.need_usd>0)s.push(['todo','円をドルに替える','約 $'+num(fx.need_usd,0)+'（約 '+yen(fx.need_jpy)+'）を替えてください。']);
  else if(fx)s.push(['done','円をドルに替える','替える必要はありません（ドルの残金'+(fx.sell_usd>0?'と売りの代金':'')+'で足ります）。']);
  else s.push(['todo','残金を確かめる','moomoo の残金が注文の合計に足りるか確かめてください。']);
- s.push([all?'done':'todo','米国市場の寄付に指値で注文','日本時間 22:30（冬は 23:30）。'+(hasSell?'売りを先に出します。':'')+(b.limit_note||'')+'寄付が指値を超えて始まったら追いかけません。']);
- s.push([all?'done':'todo',hasSell?'約定した内容を送る':'買えた内容を送る',n+' 件中 '+m+' 件を送りました。'+(m<n?(hasSell?'買えなかった・売れなかった時は、そのボタンを押します（次の朝に出し直し、最大3日）。':'買えなかった時は「買えなかった」を押します（次の朝に出し直し、最大3日）。'):'')]);
+ s.push([all?'done':'todo','米国市場の寄付に指値で注文','日本時間 22:30（冬は 23:30）。'+(hasSell?'売りを先に出します。':'')+(b.limit_note||'')]);
+ s.push([all?'done':'todo',hasSell?'約定した内容を送る':'買えた内容を送る',n+' 件中 '+m+' 件を送りました。']);
  let cur=false;$('steps').innerHTML=s.map(([k,t,d],j)=>{let c={done:'done',warn:'warn',wait:'warn',todo:''}[k];
   if(!cur&&(k==='todo'||k==='wait')){cur=true;if(k==='todo')c='now'}
   const mark=k==='done'?'✓':(k==='wait'?'…':(k==='warn'?'!':String(j+1)));
@@ -469,7 +468,7 @@ function render(b){B=b;INBOX=b.inbox||'';
  // 注文
  const orders=b.orders||[];const open=mainOrders(b).filter(([o,i])=>!handled(o,i)).length;updateDot();
  $('ordersHead').textContent=orders.length?((b.orders_date||'')+' の指示・'+orders.length+' 件'):'';
- $('ordersNote').textContent=orders.length?((b.orders_date||'')+' の指示です。米国市場の寄付（日本時間 22:30、冬は 23:30）に指値で注文してください。売りを先にします。'+(b.limit_note||'')+'寄付が指値を超えて始まったら追いかけず、「買えなかった」を押してください（次の朝に出し直し、最大3日）。買えたら「実際に買った内容」を直して送信してください。'):'いま出ている注文はありません。';
+ $('ordersNote').textContent=orders.length?((b.orders_date||'')+' の指示です。米国市場の寄付（日本時間 22:30、冬は 23:30）に指値で注文してください。売りを先にします。'+(b.limit_note||'')+'買えたら「実際に買った内容」を直して送信してください。'):'いま出ている注文はありません。';
  const unc=orders.length&&b.cash_split&&!b.cash_split.confirmed;
  const fxn=b.fx_need,fxb=fxn&&orders.length?(fxn.need_usd>0
    ?`<div class="banner"><b>円からドルに替える額：約 $${num(fxn.need_usd,0)}（約 ${yen(fxn.need_jpy)}）</b>買いの合計は指値いっぱいで $${num(fxn.buy_usd,0)}、ドルの残金は $${num(fxn.usd_cash,0)}${fxn.sell_usd>0?`、売りの代金の見込みは $${num(fxn.sell_usd,0)}です。売りが約定しなかった時に備えるなら $${num(fxn.need_usd_nosell,0)}`:''}です。</div>`
