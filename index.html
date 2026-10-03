@@ -7,111 +7,173 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
-<meta name="theme-color" content="#0e1116" media="(prefers-color-scheme: dark)">
-<meta name="theme-color" content="#f4f5f7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b0f15" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f4f6f9" media="(prefers-color-scheme: light)">
 <style>
-:root{--bg:#f4f5f7;--card:#ffffff;--card2:#f0f2f5;--fg:#12151a;--mut:#6b7280;--line:#e5e7eb;--acc:#2f6bff;--acc2:#e8efff;--acc-fg:#ffffff;
- --up:#0a9f6a;--up2:#e3f6ee;--down:#e5484d;--down2:#fdecec;--warn:#b26a00;--warn2:#fff3dd;--spy:#a0a7b4;--shadow:0 1px 2px rgba(16,24,40,.06),0 1px 3px rgba(16,24,40,.08)}
-@media (prefers-color-scheme:dark){:root{--bg:#0e1116;--card:#171b22;--card2:#1f242d;--fg:#eef1f5;--mut:#8b93a1;--line:#262c35;--acc:#5b8cff;--acc2:#1b2640;--acc-fg:#0b1020;
- --up:#27c28c;--up2:#12291f;--down:#ff6b6e;--down2:#2e1718;--warn:#f0b04a;--warn2:#2e2412;--spy:#5d6572;--shadow:none}}
+/* 画面 v26（2026-10-03 利用者「デザインをもっとわかりやすく洗練させてほしい。既存の機能は消さずに」） */
+:root{--bg:#f4f6f9;--bar:rgba(244,246,249,.86);--card:#ffffff;--card2:#f1f4f8;--fg:#0f172a;--fg2:#334155;--mut:#64748b;--line:#e3e8ef;
+ --acc:#2563eb;--acc2:#e8f0ff;--acc-fg:#ffffff;--grad:linear-gradient(135deg,#2563eb 0%,#6d4aff 100%);
+ --up:#047857;--up2:#e3f5ec;--down:#dc2626;--down2:#fdeeee;--warn:#a35200;--warn2:#fff4e2;--spy:#9aa4b2;
+ --shadow:0 1px 2px rgba(15,23,42,.04),0 6px 16px rgba(15,23,42,.05);--r:18px;--r2:12px}
+@media (prefers-color-scheme:dark){:root{--bg:#0b0f15;--bar:rgba(11,15,21,.86);--card:#141a23;--card2:#1c2431;--fg:#e9eef5;--fg2:#c6cfdb;--mut:#91a0b3;--line:#253042;
+ --acc:#6d9bff;--acc2:#172340;--acc-fg:#0b1020;--grad:linear-gradient(135deg,#3463e6 0%,#6a47f5 100%);
+ --up:#34d399;--up2:#0f2a20;--down:#f87171;--down2:#2c1517;--warn:#fbbf24;--warn2:#2b2311;--spy:#5f6b7c;--shadow:none}}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html{-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.5 system-ui,-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.6 system-ui,-apple-system,"Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;letter-spacing:.01em}
 .num{font-variant-numeric:tabular-nums}
+b{font-weight:700}
 /* 上のバー */
-.top{position:sticky;top:0;z-index:5;background:var(--bg);padding:calc(10px + env(safe-area-inset-top)) 16px 8px;display:flex;align-items:center;gap:10px}
-.logo{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--acc),#7c5cff);display:grid;place-items:center;color:#fff}
-.brand{font-weight:800;font-size:19px;letter-spacing:.2px}.brand small{display:block;font-weight:500;font-size:11.5px;color:var(--mut);letter-spacing:0;margin-top:-2px}
-.top .sp{flex:1}.iconbtn{width:36px;height:36px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--fg);display:grid;place-items:center}
-main{padding:0 16px calc(84px + env(safe-area-inset-bottom));max-width:640px;margin:0 auto}
-.tab{display:none}.tab.on{display:block}
-.srow{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--line)}.srow:last-child{border-bottom:0}
-.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 16px;margin:12px 0;box-shadow:var(--shadow)}
-h2{font-size:16px;margin:0 0 6px}h3{font-size:12.5px;margin:12px 0 6px;color:var(--mut);font-weight:600}
-.mut{color:var(--mut);font-size:12.5px}.note{font-size:12.5px;color:var(--mut);margin-top:6px}
-/* 評価額 */
-.hero{padding:10px 2px 4px}.hero .lab{color:var(--mut);font-size:13px}.hero .val{font-size:34px;font-weight:800;letter-spacing:-.5px;line-height:1.15;margin:2px 0 6px}
-.pill{display:inline-flex;align-items:center;gap:4px;border-radius:999px;padding:2px 10px;font-weight:700;font-size:13px;background:var(--card2)}
+.top{position:sticky;top:0;z-index:5;background:var(--bg);background:var(--bar);-webkit-backdrop-filter:saturate(1.4) blur(14px);backdrop-filter:saturate(1.4) blur(14px);
+ padding:calc(10px + env(safe-area-inset-top)) 16px 10px;display:flex;align-items:center;gap:10px;border-bottom:1px solid transparent;transition:border-color .2s}
+.top.scrolled{border-bottom-color:var(--line)}
+.logo{width:32px;height:32px;border-radius:10px;background:var(--grad);display:grid;place-items:center;color:#fff;flex:none}
+.brand{font-weight:800;font-size:18px;letter-spacing:.2px;line-height:1.2;min-width:0}.brand small{display:block;font-weight:500;font-size:11.5px;color:var(--mut);letter-spacing:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.top .sp{flex:1}
+.cur{display:inline-flex;background:var(--card2);border:1px solid var(--line);border-radius:999px;padding:2px;flex:none}
+.cur button{border:0;background:transparent;color:var(--mut);font-weight:800;font-size:13px;width:32px;height:28px;min-height:0;padding:0;border-radius:999px}
+.cur button.on{background:var(--card);color:var(--fg);box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.iconbtn{width:36px;height:36px;min-height:0;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--fg);display:grid;place-items:center;padding:0;flex:none}
+.iconbtn svg{width:18px;height:18px}.iconbtn.spin svg{animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+main{padding:0 16px calc(96px + env(safe-area-inset-bottom));max-width:640px;margin:0 auto}
+.tab{display:none}.tab.on{display:block;animation:fade .18s ease-out}@keyframes fade{from{opacity:.4;transform:translateY(4px)}to{opacity:1;transform:none}}
+/* 見出し */
+.ph{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin:8px 2px 2px}
+.ph h1{font-size:24px;line-height:1.25;margin:0;letter-spacing:-.2px}.ph .mut{text-align:right}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin:12px 0;box-shadow:var(--shadow)}
+.card.hl{border:2px solid var(--acc)}
+.ct{display:flex;align-items:center;gap:10px;font-size:15.5px;font-weight:700;margin:0 0 6px}
+.ct .ic{width:30px;height:30px;border-radius:10px;background:var(--acc2);color:var(--acc);display:grid;place-items:center;flex:none}.ct .ic svg{width:16px;height:16px}
+h2{font-size:16px;margin:0 0 6px}h3{font-size:12.5px;margin:14px 0 6px;color:var(--mut);font-weight:700;letter-spacing:.04em}
+.mut{color:var(--mut);font-size:12.5px}.note{font-size:12.5px;color:var(--mut);margin-top:8px;line-height:1.6}
+.srow{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}.srow:last-child{border-bottom:0}
+/* ホーム */
+.count{background:var(--grad);color:#fff;border-radius:var(--r);padding:16px 18px;margin:10px 0 4px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.count:after{content:"";position:absolute;right:-30px;top:-30px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.08)}
+.count .lab{font-size:13px;opacity:.92;font-weight:600}.count .big{font-size:28px;font-weight:800;letter-spacing:-.3px;line-height:1.2;margin:4px 0 2px}
+.count .big b{font-size:42px}.count .sub{font-size:13px;opacity:.95;line-height:1.55}
+.hero .lab{color:var(--mut);font-size:13px;font-weight:600}.hero .val{font-size:34px;font-weight:800;letter-spacing:-.6px;line-height:1.15;margin:4px 0 10px}
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.cmp>div{background:var(--card2);border-radius:var(--r2);padding:9px 12px}.cmp span{display:block;color:var(--mut);font-size:11.5px;font-weight:600}.cmp b{font-size:17px}
+.pill{display:inline-flex;align-items:center;gap:4px;border-radius:999px;padding:1px 10px;font-weight:800;font-size:15px;background:var(--card2)}
 .pill.up{color:var(--up);background:var(--up2)}.pill.down{color:var(--down);background:var(--down2)}
-.chip{display:inline-block;margin-top:10px;border-radius:999px;padding:4px 12px;font-size:12.5px;background:var(--acc2);color:var(--acc);font-weight:600}
-.count{background:linear-gradient(135deg,var(--acc),#7c5cff);color:#fff;border-radius:18px;padding:16px 18px;margin:8px 0 4px;box-shadow:var(--shadow)}
-.count .lab{font-size:13px;opacity:.9}.count .big{font-size:30px;font-weight:800;letter-spacing:-.3px;line-height:1.2;margin:2px 0}
-.count .big b{font-size:44px}.count .sub{font-size:13px;opacity:.92}
+.cmp .pill,.cmp .pill.up,.cmp .pill.down{background:none;padding:0;font-size:17px}
+.chip{display:inline-flex;align-items:center;gap:6px;margin-top:12px;border-radius:999px;padding:5px 12px;font-size:12.5px;background:var(--acc2);color:var(--acc);font-weight:700;max-width:100%}
 .tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0}
-.tile{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 12px;box-shadow:var(--shadow);min-width:0}
-.tile span{display:block;color:var(--mut);font-size:11.5px}.tile b{display:block;font-size:15px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-button.tile{text-align:left;color:var(--fg);font:inherit}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px;box-shadow:var(--shadow);min-width:0;text-align:left;color:var(--fg);font:inherit;display:flex;flex-direction:column;gap:6px}
+.tile .ti{width:28px;height:28px;border-radius:9px;background:var(--acc2);color:var(--acc);display:grid;place-items:center}.tile .ti svg{width:15px;height:15px}
+.tile span{display:block;color:var(--mut);font-size:11.5px;font-weight:600}.tile b{display:block;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 /* グラフ */
-#chart{width:100%;height:170px;display:block;touch-action:pan-y}
-nav.tabs svg,.logo svg,.iconbtn svg{width:22px;height:22px;flex:none}.logo svg,.iconbtn svg{width:18px;height:18px}
-.legend{display:flex;gap:14px;font-size:12px;color:var(--mut);margin-top:6px;flex-wrap:wrap}.legend i{display:inline-block;width:14px;height:3px;border-radius:2px;vertical-align:middle;margin-right:5px}
-.sel{margin-top:8px;font-size:13px}
+#chart{width:100%;height:170px;display:block;touch-action:pan-y;margin-top:4px}
+.legend{display:flex;gap:14px;font-size:12px;color:var(--mut);margin-top:8px;flex-wrap:wrap}.legend i{display:inline-block;width:14px;height:3px;border-radius:2px;vertical-align:middle;margin-right:5px}
+.sel{margin-top:10px;font-size:13px;background:var(--card2);border-radius:var(--r2);padding:10px 12px}.sel:empty{display:none}
 /* 表 */
 table{width:100%;border-collapse:collapse;font-size:13.5px}td,th{padding:7px 3px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}
-th{font-weight:600;color:var(--mut);font-size:11.5px}td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+th{font-weight:700;color:var(--mut);font-size:11.5px}td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
 .up{color:var(--up)}.down{color:var(--down)}
 /* 持ち株 */
 .hrow{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}.hrow:last-child{border-bottom:0}
-.av{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-weight:800;font-size:12px;color:#fff;flex:none}
+.av{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;font-weight:800;font-size:11.5px;color:#fff;flex:none;letter-spacing:.02em}
+.av.cash{background:var(--card2);color:var(--mut)}
 .hmid{flex:1;min-width:0}.hmid b{display:block}.hmid span{display:block;color:var(--mut);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.hright{text-align:right}.hright b{display:block}.bar{height:4px;border-radius:2px;background:var(--card2);margin-top:6px;overflow:hidden}.bar i{display:block;height:100%;background:var(--acc)}
+.hright{text-align:right;flex:none}.hright b{display:block}.hright span{font-size:12.5px;font-weight:700}
+.bar{height:4px;border-radius:2px;background:var(--card2);margin-top:6px;overflow:hidden}.bar i{display:block;height:100%;background:var(--acc);border-radius:2px}
+/* 注文の流れ */
+.steps{list-style:none;margin:6px 0 0;padding:0;display:grid;gap:0}
+.step{display:grid;grid-template-columns:30px 1fr;gap:12px;align-items:start;position:relative;padding-bottom:14px}
+.step:last-child{padding-bottom:0}
+.step:not(:last-child):before{content:"";position:absolute;left:14px;top:30px;bottom:2px;width:2px;background:var(--line)}
+.step .n{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:13px;background:var(--card2);color:var(--mut);position:relative;z-index:1}
+.step.done .n{background:var(--up2);color:var(--up)}.step.now .n{background:var(--acc);color:var(--acc-fg);box-shadow:0 0 0 4px var(--acc2)}
+.step.warn .n{background:var(--warn2);color:var(--warn)}
+.step b{display:block;font-size:14.5px;line-height:1.4;padding-top:4px}.step span{display:block;font-size:12.5px;color:var(--mut);line-height:1.55}
+.step.now b{color:var(--acc)}.step.warn span{color:var(--warn)}
+details.more{margin-top:12px;border-top:1px solid var(--line);padding-top:10px}
+details.more summary{cursor:pointer;color:var(--acc);font-size:13px;font-weight:700;list-style:none}details.more summary::-webkit-details-marker{display:none}
+details.more summary:after{content:" ＋"}details.more[open] summary:after{content:" －"}
 /* 注文 */
-.ord{border-top:1px solid var(--line);padding:14px 0}.ord:first-child{border-top:0;padding-top:4px}
-.ordhead{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.tk{font-weight:800;font-size:16px}
-.badge{font-size:12px;font-weight:700;border-radius:8px;padding:2px 8px}.badge.buy{color:var(--up);background:var(--up2)}.badge.sell{color:var(--down);background:var(--down2)}
-.vchip{font-size:12px;border-radius:8px;padding:2px 8px;font-weight:600}.vchip.ok{color:var(--up);background:var(--up2)}.vchip.caution{color:var(--warn);background:var(--warn2)}.vchip.skip{color:var(--down);background:var(--down2)}.vchip.pending{color:var(--mut);background:var(--card2)}
-.rec{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin:10px 0;background:var(--card2);border-radius:12px;padding:8px 10px}
-.rec span{display:block;color:var(--mut);font-size:11px}.rec b{font-variant-numeric:tabular-nums;font-size:15.5px}
-.act{display:grid;grid-template-columns:1.1fr 1fr .8fr;gap:8px}.act label{font-size:11px;color:var(--mut);display:flex;flex-direction:column;gap:3px}
-.act2{display:flex;gap:8px;align-items:center;margin-top:8px}.act2 input{flex:1;width:auto;min-width:0}.act2>button{flex:none}
-input,button,select{font:inherit;border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:10px;padding:9px 10px;min-width:0;width:100%}
-input:focus{outline:2px solid var(--acc);outline-offset:-1px}
-button{width:auto;cursor:pointer;white-space:nowrap}button.p{background:var(--acc);color:var(--acc-fg);border-color:var(--acc);font-weight:700}
-button.small{padding:4px 10px;font-size:12px;border-radius:8px}
-.seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;flex:1;background:var(--card)}
-.seg button{border:0;border-radius:0;flex:1;padding:9px 6px;background:transparent}.seg button.on{background:var(--acc);color:var(--acc-fg);font-weight:700}
-.st{font-size:12.5px;margin-top:6px}.ok{color:var(--up)}.ng{color:var(--down)}
-.opt{border-left:3px solid var(--acc);padding-left:10px}
-.banner{border-radius:14px;padding:12px 14px;margin:12px 0;font-size:13.5px}
+.ord{padding:16px}.ord.filled{opacity:.62}.ord.opt{border-left:4px solid var(--acc)}
+.oh{display:flex;align-items:flex-start;gap:8px 10px;flex-wrap:wrap}.otk{flex:1;min-width:96px}.otk .tk{display:block;font-weight:800;font-size:19px;line-height:1.25;letter-spacing:.01em}
+.otk .mut{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.badge{font-size:12.5px;font-weight:800;border-radius:9px;padding:3px 9px;flex:none;margin-top:2px}.badge.buy{color:var(--up);background:var(--up2)}.badge.sell{color:var(--down);background:var(--down2)}
+.vchip{font-size:12px;border-radius:999px;padding:3px 10px;font-weight:700;flex:none;margin-top:2px}.vchip.ok{color:var(--up);background:var(--up2)}.vchip.caution{color:var(--warn);background:var(--warn2)}.vchip.skip{color:var(--down);background:var(--down2)}.vchip.pending{color:var(--mut);background:var(--card2)}
+.callout{border-radius:var(--r2);padding:10px 12px;margin:12px 0 0;font-size:13px;line-height:1.6;background:var(--card2);border-left:3px solid var(--mut)}
+.callout.caution{background:var(--warn2);border-left-color:var(--warn)}.callout.skip{background:var(--down2);border-left-color:var(--down)}.callout.ok{background:var(--up2);border-left-color:var(--up)}
+.callout b{display:inline}
+.rec{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0 0}
+.rec>div{background:var(--card2);border-radius:var(--r2);padding:9px 10px;min-width:0}
+.rec span{display:block;color:var(--mut);font-size:11px;font-weight:600;line-height:1.35}.rec b{font-variant-numeric:tabular-nums;font-size:16px;display:block;margin-top:2px;overflow-wrap:anywhere;line-height:1.3}
+.sendbox{margin-top:14px;border-top:1px dashed var(--line);padding-top:12px}
+.sendbox .sh{font-size:12.5px;font-weight:800;color:var(--fg2);margin-bottom:8px;letter-spacing:.04em}
+.act{display:grid;grid-template-columns:1.1fr 1fr .8fr;gap:8px}.act label{font-size:11.5px;color:var(--mut);display:flex;flex-direction:column;gap:4px;font-weight:600}
+.act2{display:flex;gap:8px;align-items:center;margin-top:10px}.act2 input{flex:1;width:auto;min-width:0}.act2>button{flex:none}
+.btns{display:flex;gap:8px;margin-top:10px}.btns .grow{flex:1}
+input,button,select{font:inherit;border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:var(--r2);padding:10px 11px;min-width:0;width:100%;min-height:42px}
+input{background:var(--card2);border-color:transparent}input:disabled{opacity:.6}
+input:focus{outline:2px solid var(--acc);outline-offset:-1px;background:var(--card)}
+button{width:auto;cursor:pointer;white-space:nowrap;font-weight:700;transition:transform .08s ease,opacity .15s}button:active{transform:scale(.98)}
+button.p{background:var(--acc);color:var(--acc-fg);border-color:var(--acc)}
+button.ghost{background:transparent;color:var(--fg2)}
+button.small{padding:5px 11px;font-size:12px;border-radius:9px;min-height:30px;font-weight:700}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:var(--r2);overflow:hidden;flex:1;background:var(--card2);padding:2px;gap:2px}
+.seg button{border:0;border-radius:10px;flex:1;padding:8px 6px;background:transparent;min-height:36px;color:var(--mut)}.seg button.on{background:var(--card);color:var(--fg);box-shadow:0 1px 2px rgba(0,0,0,.12)}
+#o_side button.on[data-v="買"]{background:var(--up2);color:var(--up);box-shadow:inset 0 0 0 1.5px var(--up)}#o_side button.on[data-v="売"]{background:var(--down2);color:var(--down);box-shadow:inset 0 0 0 1.5px var(--down)}
+.st{font-size:12.5px;margin-top:8px;font-weight:600}.st:empty{display:none}.ok{color:var(--up)}.ng{color:var(--down)}
+.banner{border-radius:14px;padding:12px 14px;margin:12px 0;font-size:13.5px;line-height:1.6;background:var(--card);border:1px solid var(--line)}
 .banner.test{background:var(--warn2);color:var(--warn);border:1.5px solid var(--warn)}.banner.info{background:var(--acc2);color:var(--fg);border:1px solid var(--acc)}
 .banner.alert{background:var(--warn2);border:1px solid var(--warn)}
 .banner b{display:block;margin-bottom:2px}
 .empty{color:var(--mut);font-size:13px;padding:8px 0}
+.emptycard{text-align:center;padding:28px 16px}.emptycard .eic{width:48px;height:48px;border-radius:16px;background:var(--up2);color:var(--up);display:grid;place-items:center;margin:0 auto 10px}
+.emptycard b{display:block;font-size:16px;margin-bottom:4px}
+.kv{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.tag{display:inline-block;font-size:11.5px;font-weight:700;border-radius:999px;padding:1px 9px}.tag.ok{background:var(--up2)}.tag.ng{background:var(--down2)}
 /* 下のタブ */
-nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--card);border-top:1px solid var(--line);display:flex;padding:6px 6px calc(6px + env(safe-area-inset-bottom))}
-nav.tabs button{flex:1;border:0;background:transparent;color:var(--mut);display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;padding:6px 0;position:relative;border-radius:10px}
-nav.tabs button.on{color:var(--acc);font-weight:700}
-nav.tabs .dot{position:absolute;top:2px;left:calc(50% + 8px);min-width:16px;height:16px;border-radius:8px;background:var(--down);color:#fff;font-size:10px;line-height:16px;padding:0 4px;font-weight:700}
-.foot{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:4px 2px 12px}
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--card);background:var(--bar);-webkit-backdrop-filter:saturate(1.4) blur(14px);backdrop-filter:saturate(1.4) blur(14px);
+ border-top:1px solid var(--line);display:flex;justify-content:space-around;padding:6px 8px calc(6px + env(safe-area-inset-bottom))}
+nav.tabs button{flex:1;max-width:120px;border:0;background:transparent;color:var(--mut);display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11px;font-weight:700;padding:2px 0;position:relative;min-height:0}
+nav.tabs .ico{width:58px;height:30px;border-radius:15px;display:grid;place-items:center;transition:background .2s}
+nav.tabs svg{width:22px;height:22px}
+nav.tabs button.on{color:var(--acc)}nav.tabs button.on .ico{background:var(--acc2)}
+nav.tabs .dot{position:absolute;top:-2px;left:calc(50% + 10px);min-width:18px;height:18px;border-radius:9px;background:var(--down);color:#fff;font-size:10.5px;line-height:18px;padding:0 5px;font-weight:800;border:2px solid var(--card)}
+.foot{padding:4px 4px 12px;font-size:12px;color:var(--mut);line-height:1.6}
+/* 送信の知らせ */
+.toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));transform:translate(-50%,16px);opacity:0;pointer-events:none;z-index:9;
+ background:var(--fg);color:var(--bg);border-radius:14px;padding:10px 16px;font-size:13.5px;font-weight:700;max-width:calc(100% - 32px);box-shadow:0 8px 24px rgba(0,0,0,.18);transition:opacity .2s,transform .2s}
+.toast{width:max-content}.toast.show{opacity:1;transform:translate(-50%,0)}.toast.ng{background:#c62828;color:#fff}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
-<div class="top">
+<div class="top" id="topbar">
  <div class="logo" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg></div>
  <div class="brand">Quant AI<small id="sub">読み込み中…</small></div>
  <div class="sp"></div>
- <button class="iconbtn" id="curBtn" aria-label="ドルと円の切り替え" onclick="toggleCur()" style="font-weight:800;width:auto;padding:0 12px">$</button>
- <button class="iconbtn" aria-label="更新" onclick="load(true)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg></button>
+ <div class="cur" id="curBtn" role="group" aria-label="金額の表示（ドルと円）"><button data-c="USD" class="on">$</button><button data-c="JPY">¥</button></div>
+ <button class="iconbtn" id="reloadBtn" aria-label="更新" onclick="load(true)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg></button>
 </div>
 <main>
-<div id="lock" class="card" style="display:none"><h2>合言葉</h2><div class="mut">初回だけ、PC の QR を読むか、合言葉を入力してください。</div>
+<div id="lock" class="card" style="display:none"><div class="ct"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>合言葉</div><div class="mut">初回だけ、PC の QR を読むか、合言葉を入力してください。</div>
  <div class="act2"><input id="pass" type="password" placeholder="合言葉"><button class="p" onclick="savePass()">開く</button></div></div>
 <div id="banners"></div>
 
 <section class="tab" id="t-home">
  <div class="count" id="countdown" style="display:none"><div class="lab" id="cd_lab">次の売買まで</div><div class="big num"><span id="cd_pre">あと </span><b id="cd_days">—</b><span id="cd_unit"> 日</span></div><div class="sub" id="cd_sub"></div></div>
- <div class="hero">
+ <div class="card hero">
   <div class="lab">評価額</div>
   <div class="val num" id="k_total">—</div>
-  <div><span class="pill num" id="k_ret">—</span> <span class="mut">開始から</span>　<span class="mut">S&amp;P500 <b class="num" id="k_spy">—</b></span></div>
+  <div class="cmp">
+   <div><span>この運用（開始から）</span><b class="pill num" id="k_ret">—</b></div>
+   <div><span>S&amp;P500（同じ期間）</span><b class="num" id="k_spy">—</b></div>
+  </div>
   <div class="chip" id="strat">—</div>
  </div>
  <div class="tiles">
-  <button class="tile" data-go="holdings"><span>持ち株</span><b class="num" id="k_hold">—</b></button>
-  <button class="tile" data-go="records"><span>口座の残金</span><b class="num" id="k_cash">—</b></button>
-  <button class="tile" data-go="orders"><span>Claude の検算</span><b id="k_verify">—</b></button>
+  <button class="tile" data-go="holdings"><span class="ti"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12A9 9 0 1 1 12 3v9z"/><path d="M15 3.5A9 9 0 0 1 20.5 9H15z"/></svg></span><span>持ち株</span><b class="num" id="k_hold">—</b></button>
+  <button class="tile" data-go="records"><span class="ti"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M16 15h2"/></svg></span><span>口座の残金</span><b class="num" id="k_cash">—</b></button>
+  <button class="tile" data-go="orders"><span class="ti"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/></svg></span><span>Claude の検算</span><b id="k_verify">—</b></button>
  </div>
- <div class="card" id="curveCard">
-  <h2>推移</h2>
+ <div class="card" id="curveCard" style="display:none">
+  <div class="ct"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/></svg></span>推移</div>
   <div class="mut" id="curveNote"></div>
   <svg id="chart" viewBox="0 0 320 170" preserveAspectRatio="none"></svg>
   <div class="legend"><span><i style="background:var(--acc)"></i>この運用</span><span><i style="background:var(--spy)"></i>S&amp;P500</span><span>グラフを押すと、その日の持ち株</span></div>
@@ -120,17 +182,20 @@ nav.tabs .dot{position:absolute;top:2px;left:calc(50% + 8px);min-width:16px;heig
 </section>
 
 <section class="tab" id="t-orders">
- <div class="card">
-  <h2>今日の注文</h2>
-  <div class="mut" id="ordersNote"></div>
-  <div id="verifyBox"></div>
+ <div class="ph"><h1>注文</h1><span class="mut" id="ordersHead"></span></div>
+ <div class="card" id="flowCard">
+  <div class="ct"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5h10M9 12h10M9 19h10"/><path d="M4 5h.01M4 12h.01M4 19h.01"/></svg></span>今日の注文の流れ</div>
+  <ol class="steps" id="steps"></ol>
+  <details class="more"><summary>注文のしかた（詳しく）</summary><div class="note" id="ordersNote"></div></details>
  </div>
- <div class="card"><div id="orders"></div></div>
+ <div id="verifyBox"></div>
+ <div id="orders"></div>
+ <div class="card emptycard" id="ordersEmpty" style="display:none"><div class="eic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></div><b>いま出ている注文はありません</b><div class="mut" id="ordersEmptyNote"></div></div>
 </section>
 
 <section class="tab" id="t-holdings">
+ <div class="ph"><h1>持ち株</h1><span class="mut num" id="holdHead"></span></div>
  <div class="card">
-  <h2>持ち株</h2>
   <div class="mut" id="basis"></div>
   <div id="hlist"></div>
   <div class="note" id="cash"></div>
@@ -138,9 +203,10 @@ nav.tabs .dot{position:absolute;top:2px;left:calc(50% + 8px);min-width:16px;heig
 </section>
 
 <section class="tab" id="t-records">
+ <div class="ph"><h1>記録</h1><span class="mut">口座の照合と、送った内容</span></div>
  <div class="card">
-  <h2>口座の残金の確認</h2>
-  <div class="num" id="cashPc" style="font-size:18px;font-weight:700"></div>
+  <div class="ct"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M16 15h2"/></svg></span>口座の残金の確認</div>
+  <div class="num" id="cashPc" style="font-size:18px;font-weight:800;margin-top:4px"></div>
   <div class="num" id="cashSplit" style="margin-top:2px"></div>
   <div class="note">moomoo の「円の残金」と「ドルの残金」と、それぞれ比べてください。売買の日の前に照合しておくと、注文が残金を超えません。</div>
   <div class="act2"><button class="p" style="flex:1" onclick="cashOk()">両方とも合っている</button></div>
@@ -150,13 +216,13 @@ nav.tabs .dot{position:absolute;top:2px;left:calc(50% + 8px);min-width:16px;heig
   <div class="note" id="cashLast"></div>
  </div>
  <div class="card" id="depCard">
-  <h2>今月の追加投資</h2>
+  <div class="ct"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></span>今月の追加投資</div>
   <div class="act2"><input id="f_dep" placeholder="今月の追加投資額（円）" inputmode="numeric"><button class="p" onclick="sendDeposit()">入金を送る</button></div>
   <div class="note" id="depNote"></div>
   <div class="st" id="d_msg"></div>
  </div>
  <div class="card">
-  <h2>指示にない売買</h2>
+  <div class="ct"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h11l-3-3M17 17H6l3 3"/></svg></span>指示にない売買</div>
   <div class="act">
    <label>銘柄<input id="o_tk" placeholder="例：RNR" autocapitalize="characters"></label>
    <label>値段（ドル）<input id="o_px" inputmode="decimal"></label>
@@ -166,19 +232,21 @@ nav.tabs .dot{position:absolute;top:2px;left:calc(50% + 8px);min-width:16px;heig
   <div class="note">銘柄はティッカー（例：SM、TQQQ）、値段は1株のドル、口数は株数（端株は小数）で入れてください。投資信託は記録できません。</div>
   <div class="st" id="o_msg"></div>
  </div>
- <div class="card"><h2>送った記録（間違えたら取り消す）</h2>
-  <div class="note">間違えて送った記録は「取り消す」を押し、正しい内容を送り直してください。PC の次の処理（9:30・21:00）で、持ち株と残金が直ります。</div>
+ <div class="card"><div class="ct"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4l3 2"/><circle cx="12" cy="12" r="9"/></svg></span>送った記録（間違えたら取り消す）</div>
+  <div class="note" style="margin-top:0">間違えて送った記録は「取り消す」を押し、正しい内容を送り直してください。次の朝の処理（10 時ごろ）で、持ち株と残金が直ります。</div>
   <div id="sentList" class="mut">まだありません。</div><div class="note" id="cancelNote"></div><div class="st" id="x_msg"></div></div>
- <div class="card"><h2>入れ替えの履歴</h2><div id="hist" class="mut">なし</div></div>
- <div class="foot mut"><span>価格は米国市場の前日の終値です（PC が毎日更新します）。検証済みの規則を当てはめた結果で、投資助言ではありません。画面 v24</span></div>
+ <div class="card"><div class="ct"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg></span>入れ替えの履歴</div><div id="hist" class="mut">なし</div></div>
+ <div class="foot">価格は米国市場の前日の終値です（クラウドが毎朝更新します）。検証済みの規則を当てはめた結果で、投資助言ではありません。画面 v26</div>
 </section>
 </main>
 
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
 <nav class="tabs" id="tabs">
- <button data-tab="home" class="on"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></svg>ホーム</button>
- <button data-tab="orders"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5h10M9 12h10M9 19h10"/><path d="M4 5h.01M4 12h.01M4 19h.01"/></svg>注文<span class="dot" id="dot-orders" style="display:none"></span></button>
- <button data-tab="holdings"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12A9 9 0 1 1 12 3v9z"/><path d="M15 3.5A9 9 0 0 1 20.5 9H15z"/></svg>持ち株</button>
- <button data-tab="records"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l4 4v14H6z"/><path d="M9 12h7M9 16h7"/></svg>記録<span class="dot" id="dot-records" style="display:none">!</span></button>
+ <button data-tab="home" class="on"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></svg></span>ホーム</button>
+ <button data-tab="orders"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5h10M9 12h10M9 19h10"/><path d="M4 5h.01M4 12h.01M4 19h.01"/></svg></span>注文<span class="dot" id="dot-orders" style="display:none"></span></button>
+ <button data-tab="holdings"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12A9 9 0 1 1 12 3v9z"/><path d="M15 3.5A9 9 0 0 1 20.5 9H15z"/></svg></span>持ち株</button>
+ <button data-tab="records"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l4 4v14H6z"/><path d="M9 12h7M9 16h7"/></svg></span>記録<span class="dot" id="dot-records" style="display:none">!</span></button>
 </nav>
 
 <script>
@@ -189,8 +257,9 @@ const yen=x=>x==null?'—':(x<0?'−¥'+Math.round(-x).toLocaleString():'¥'+Mat
 const num=(x,d=2)=>x==null||x===''?'—':Number(x).toLocaleString(undefined,{minimumFractionDigits:d,maximumFractionDigits:d});
 const qty=x=>x==null?'—':(Math.abs(x-Math.round(x))<1e-6?String(Math.round(x)):Number(x).toFixed(2));
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-let B=null,INBOX='',userTab=false,CUR='USD';
-try{CUR=localStorage.getItem('qai_cur')||'USD'}catch(e){}
+const ls={get:(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v}catch(e){return d}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};
+const ss={get:(k,d)=>{try{const v=sessionStorage.getItem(k);return v==null?d:v}catch(e){return d}},set:(k,v)=>{try{sessionStorage.setItem(k,v)}catch(e){}}};
+let B=null,INBOX='',userTab=false,CUR=ls.get('qai_cur','USD'),CURTAB='home',restored=false;
 // 金額はふだんドルで、「$ / ¥」で円に切り替え（2026-09-23 利用者の指示）。ドルが無ければ円を今のドル円で割る
 function money(usd,jpy){const fx=B&&B.fx;
  if(CUR==='JPY'){const j=jpy!=null?jpy:(usd!=null&&fx?usd*fx:null);return yen(j)}
@@ -198,25 +267,38 @@ function money(usd,jpy){const fx=B&&B.fx;
  return (u<0?'−$':'$')+a.toLocaleString(undefined,{minimumFractionDigits:d,maximumFractionDigits:d})}
 const other=(usd,jpy)=>{const fx=B&&B.fx;return CUR==='JPY'?(usd!=null?'$'+num(usd,0):(jpy!=null&&fx?'$'+num(jpy/fx,0):'')):(jpy!=null?yen(jpy):(usd!=null&&fx?yen(usd*fx):''))};
 const ordAmt=o=>o.amount_jpy!=null&&B.fx?o.amount_jpy/B.fx:o.amount_usd;   // 口数×値段にそろえる
-function toggleCur(){CUR=CUR==='USD'?'JPY':'USD';try{localStorage.setItem('qai_cur',CUR)}catch(e){}if(B)render(B)}
+function curMark(){document.querySelectorAll('#curBtn button').forEach(b=>b.classList.toggle('on',b.dataset.c===CUR))}
+function toggleCur(c){CUR=c||(CUR==='USD'?'JPY':'USD');ls.set('qai_cur',CUR);curMark();if(B)render(B)}
+$('curBtn').addEventListener('click',e=>{const b=e.target.closest('button');if(b)toggleCur(b.dataset.c)});
+curMark();
 // ---- タブ
-function show(t,byUser){document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x.id==='t-'+t));
+// 2026-10-03 訂正: 以前は読み込むたびに、未約定の注文があると、どのタブにいても「注文」に飛んでいた（約定を送った後も、次の朝の処理まで続いた）。
+// 読み込み直しでは今いるタブ（とスクロールの位置）を保ち、新しい注文が出た時だけ、最初の1回に「注文」を開く
+function show(t,byUser){CURTAB=t;document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x.id==='t-'+t));
  document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===t));
- if(byUser){userTab=true;try{localStorage.setItem('qai_tab',t)}catch(e){}}window.scrollTo({top:0})}
+ ss.set('qai_tab_s',t);ls.set('qai_tab',t);
+ if(t==='orders'&&B)ls.set('qai_orders_seen',ordersKey(B));
+ if(byUser){userTab=true;window.scrollTo({top:0})}}
 $('tabs').addEventListener('click',e=>{const b=e.target.closest('button');if(b)show(b.dataset.tab,true)});
 document.addEventListener('click',e=>{const g=e.target.closest('[data-go]');if(g){show(g.dataset.go,true)}});
+const SC0=(()=>{try{return JSON.parse(ss.get('qai_scroll','null'))}catch(e){return null}})();
+let scT=null;addEventListener('scroll',()=>{$('topbar').classList.toggle('scrolled',scrollY>4);if(!restored)return;clearTimeout(scT);scT=setTimeout(()=>ss.set('qai_scroll',JSON.stringify({t:CURTAB,y:scrollY})),150)},{passive:true});
+// 通知から開いた時の行き先（#t=orders など。2026-10-03 注文の通知は「注文」を開く）
+const HT=(location.hash.match(/t=(home|orders|holdings|records)/)||[])[1]||'';
+if(HT){ss.set('qai_tab_s',HT);ls.set('qai_tab',HT);if(!/k=/.test(location.hash))history.replaceState(null,'',location.pathname)}
+function ordersKey(b){const o=(b.orders||[]).filter(x=>!x.side.includes('選択肢'));return (b.orders_date||'')+'|'+o.map(x=>x.ticker).join(',')}
 // ---- 合言葉と復号
-function getPass(){const h=location.hash.match(/k=([^&]+)/);if(h){try{localStorage.setItem('qai_pass',decodeURIComponent(h[1]))}catch(e){}history.replaceState(null,'',location.pathname)}
- try{return localStorage.getItem('qai_pass')||''}catch(e){return ''}}
-function savePass(){try{localStorage.setItem('qai_pass',$('pass').value)}catch(e){}load(true)}
+function getPass(){const h=location.hash.match(/k=([^&]+)/);if(h){ls.set('qai_pass',decodeURIComponent(h[1]));history.replaceState(null,'',location.pathname)}
+ return ls.get('qai_pass','')}
+function savePass(){ls.set('qai_pass',$('pass').value);load(true)}
 async function decrypt(blob,pass){const te=new TextEncoder();const b64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
  const km=await crypto.subtle.importKey('raw',te.encode(pass),'PBKDF2',false,['deriveKey']);
  const key=await crypto.subtle.deriveKey({name:'PBKDF2',salt:b64(blob.salt),iterations:blob.iter,hash:'SHA-256'},km,{name:'AES-GCM',length:256},false,['decrypt']);
  const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:b64(blob.iv)},key,b64(blob.ct));return JSON.parse(new TextDecoder().decode(pt))}
 // ---- 送信
 // ---- 送った記録（2026-10-02 利用者「入力を間違えたときに訂正できるところも欲しい」）
-function sends(){try{return JSON.parse(localStorage.getItem('qai_sends')||'[]')}catch(e){return []}}
-function saveSends(a){try{localStorage.setItem('qai_sends',JSON.stringify(a.slice(-40)))}catch(e){}}
+function sends(){try{return JSON.parse(ls.get('qai_sends','[]'))}catch(e){return []}}
+function saveSends(a){ls.set('qai_sends',JSON.stringify(a.slice(-40)))}
 function addSend(x){const a=sends();a.push(x);saveSends(a)}
 function fillText(f){const sh=f.shares,px=f.price;if(f.ticker==='DEPOSIT')return '入金 '+yen(+f.jpy);if(f.ticker==='CASHDUAL')return '残金 円 '+yen(+f.jpy)+'／$'+num(+sh,2);
  if(f.ticker==='CASHJPY')return '残金 '+yen(+sh);if(f.ticker==='CASH')return '残金 $'+num(+sh,2);if(f.ticker==='CASHOK')return '残金は合っている';
@@ -225,15 +307,15 @@ function renderSends(b){const pc={};for(const f of (b.fills_recent||[]))pc[f.id]
  for(const x of sends().slice().reverse()){if(!x.id||String(x.text).startsWith('取消'))continue;ids.add(x.id);
   items.push({id:x.id,text:x.text,when:new Date(x.at).toLocaleString('ja-JP',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}),pc:!!pc[x.id],canceled:!!x.canceled||canc.has(x.id)})}
  for(const f of (b.fills_recent||[]).slice().reverse()){if(ids.has(f.id))continue;items.push({id:f.id,text:fillText(f),when:f.date,pc:true,canceled:canc.has(f.id)})}
- $('sentList').innerHTML=items.length?items.slice(0,20).map(x=>`<div class="srow"><div><b>${esc(x.text)}</b><div class="mut">${esc(x.when||'')}・${x.canceled?'取り消し済み':(x.pc?'PC に記録済み':'PC の次の処理で取り込みます')}</div></div>${x.canceled?'':`<button class="small" data-cancel="${esc(x.id)}" data-text="${esc(x.text)}">取り消す</button>`}</div>`).join(''):'まだありません。';
+ $('sentList').innerHTML=items.length?items.slice(0,20).map(x=>`<div class="srow"><div style="min-width:0"><b class="num">${esc(x.text)}</b><div class="mut">${esc(x.when||'')}・${x.canceled?'<span class="ng">取り消し済み</span>':(x.pc?'<span class="ok">記録済み</span>':'次の朝の処理で取り込みます')}</div></div>${x.canceled?'':`<button class="small" data-cancel="${esc(x.id)}" data-text="${esc(x.text)}">取り消す</button>`}</div>`).join(''):'まだありません。';
  const lc=b.last_cancel;$('cancelNote').textContent=lc&&!lc.found?'最後の取り消し（'+lc.date+'）は、取り消す記録が見つかりませんでした（すでに取り消し済みか、別の記録です）。':''}
 document.addEventListener('click',async e=>{const x=e.target.closest('[data-cancel]');if(!x)return;e.preventDefault();
  if(!confirm('この記録を取り消しますか？（'+x.dataset.text+'）'))return;
  const [ok,m]=await post('取消 '+x.dataset.cancel);
  if(ok){const a=sends();for(const s of a)if(s.id===x.dataset.cancel)s.canceled=true;saveSends(a);renderSends(B)}
- msgTo('x_msg',ok?'取り消しを送りました。正しい内容を送り直してください（PC の次の処理で直ります）。':m,ok)});
-function sentLog(){try{return JSON.parse(localStorage.getItem('qai_sent')||'{}')}catch(e){return {}}}
-function markSent(k,t){const s=sentLog();s[k]=t;try{localStorage.setItem('qai_sent',JSON.stringify(s))}catch(e){}}
+ msgTo('x_msg',ok?'取り消しを送りました。正しい内容を送り直してください（次の朝の処理で直ります）。':m,ok)});
+function sentLog(){try{return JSON.parse(ls.get('qai_sent','{}'))}catch(e){return {}}}
+function markSent(k,t){const s=sentLog();s[k]=t;ls.set('qai_sent',JSON.stringify(s))}
 async function post(text){if(B&&B.test)return [false,'テスト表示中なので送信しません（本番では PC に送られます）：'+text];if(!INBOX)return [false,'受信先が未設定です。'];
  // 2026-10-02 訂正: 見出し（Title）に日本語を入れると、ブラウザが送信そのものを止めていた（一度も届いていなかった）。題は URL で渡す
  try{const r=await fetch('https://ntfy.sh/'+INBOX+'?title='+encodeURIComponent('約定'),{method:'POST',body:text,headers:{'Priority':'2'}});
@@ -241,42 +323,52 @@ async function post(text){if(B&&B.test)return [false,'テスト表示中なの�
   if(r.ok&&id)addSend({id:id,text:text,at:Date.now()});
   return [r.ok,r.ok?'送りました：'+text:'送れませんでした。',id]}
  catch(e){return [false,'送れませんでした（電波を確認してください）。']}}
-function msgTo(id,t,ok){const m=$(id);m.textContent=t;m.className='st '+(ok?'ok':'ng')}
+let toT=null;
+function toast(t,ok){const el=$('toast');el.textContent=t;el.className='toast show'+(ok?'':' ng');clearTimeout(toT);toT=setTimeout(()=>{el.className='toast'+(ok?'':' ng')},2600)}
+function msgTo(id,t,ok){const m=$(id);if(m){m.textContent=t;m.className='st '+(ok?'ok':'ng')}toast(t,ok)}
 function seg(el){el.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;e.preventDefault();[...el.children].forEach(x=>x.classList.toggle('on',x===b))})}
 const segv=el=>(el.querySelector('.on')||{}).dataset?.v||'';
 // ---- 注文
 const VLAB={ok:'検算：問題なし',caution:'検算：注意',skip:'検算：見送りを推奨',pending:'検算：確認中'};
 function vitem(t){const v=B.verify;if(!v)return null;if(v.status==='pending')return {verdict:'pending',note:''};return (v.items||{})[t]||null}
+function handled(o,i){const key=(B.orders_date||'')+'|'+o.ticker+'|'+i;return !!(o.filled||sentLog()[key]||(B.unfilled||{})[o.ticker]||(B.avoid||{})[o.ticker]||(B.skipped||[]).includes(o.ticker))}
+const mainOrders=b=>(b.orders||[]).map((o,i)=>[o,i]).filter(([o])=>!o.side.includes('選択肢'));
+function updateDot(){const n=B?mainOrders(B).filter(([o,i])=>!handled(o,i)).length:0;const d=$('dot-orders');d.style.display=n?'':'none';d.textContent=n}
+const nowText=()=>new Date().toLocaleString('ja-JP',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'});
 function orderHtml(o,i){
  const sell=o.side.includes('売'),opt=o.side.includes('選択肢'),key=(B.orders_date||'')+'|'+o.ticker+'|'+i,sent=sentLog()[key],v=vitem(o.ticker);
  const rec=o.fund
   ?`<div class="rec"><div><span>推奨の指値</span><b>—</b></div><div><span>口数</span><b>金額で</b></div><div><span>金額</span><b>${money(ordAmt(o),o.amount_jpy)}</b></div></div>`
-  :`<div class="rec"><div><span>推奨の指値</span><b>${o.limit!=null?'$'+num(o.limit):'成行'}</b></div><div><span>口数</span><b>${esc(o.shares??'—')}</b></div><div><span>金額の目安（終値で）</span><b>${money(ordAmt(o),o.amount_jpy)}</b></div></div>`
+  :`<div class="rec"><div><span>指値（${sell?'下限':'上限'}）</span><b>${o.limit!=null?'$'+num(o.limit):'成行'}</b></div><div><span>口数</span><b>${esc(o.shares??'—')}</b></div><div><span>金額の目安（終値で）</span><b>${money(ordAmt(o),o.amount_jpy)}</b></div></div>`
    +(!o.side.includes('売')&&typeof o.shares==='number'&&o.limit?`<div class="note">金額の目安は前日の終値（$${num(o.last)}）× 口数です。指値（上限）いっぱいで約定すると、最大 ${money(o.shares*o.limit,B.fx?o.shares*o.limit*B.fx:null)} です。</div>`:'');
  const whole=o.shares_whole!=null?`<div class="note">端株が使えない場合は <b>${o.shares_whole}株</b>です（${money(o.amount_usd_whole,o.amount_jpy_whole)}）。差額は翌月末に回します。 <button class="small setq" data-i="${i}" data-q="${o.shares_whole}">1株単位にする</button> <button class="small setq" data-i="${i}" data-q="${esc(o.shares)}">端株に戻す</button></div>`:'';
  const inputs=o.fund
   ?`<div class="act"><label>銘柄<input value="CORE（投信）" disabled></label><label>購入額（円）<input id="a_px${i}" inputmode="numeric" value="${o.amount_jpy??''}"></label><label>口数<input value="—" disabled></label></div>`
   :`<div class="act"><label>銘柄<input id="a_tk${i}" value="${esc(o.ticker)}" autocapitalize="characters"></label><label>${sell?'売却値':'購入値'}（ドル）<input id="a_px${i}" inputmode="decimal" value="${o.limit??''}"></label><label>口数<input id="a_sh${i}" inputmode="decimal" value="${typeof o.shares==='number'?o.shares:(o.held??'')}"></label></div>`;
- const hint=o.fund?'投資信託は金額で注文します。':(Number.isInteger(Number(o.shares))?'1株単位で注文し、買えた口数を送信してください。':'端株（小数）で注文してください。端株が使えない場合は1株単位で買い、その口数を送信してください。');
+ const hint=o.fund?'投資信託は金額で注文します。':(sell?'指示の口数を売り、売れた口数と値段を送信してください。':(Number.isInteger(Number(o.shares))?'1株単位で注文し、買えた口数を送信してください。':'端株（小数）で注文してください。端株が使えない場合は1株単位で買い、その口数を送信してください。'));
  const uf=(B.unfilled||{})[o.ticker],sk=(B.skipped||[]).includes(o.ticker),av=(B.avoid||{})[o.ticker];
- const st=o.filled?'<div class="st ok">PC が取り込み済みです。</div>':(av?`<div class="st ng">見送りを受け付けました。${av.replaced_by?esc(av.replaced_by)+' に置き換えました。':'次の朝、次の順位の銘柄に置き換えた注文を出します。'}</div>`:(sk?'<div class="st ng">3日続けて買えなかったので見送りました。現金は月初の買い付けで次の銘柄に回します。</div>'
+ const st=o.filled?'<div class="st ok">取り込み済みです。</div>':(av?`<div class="st ng">見送りを受け付けました。${av.replaced_by?esc(av.replaced_by)+' に置き換えました。':'次の朝、次の順位の銘柄に置き換えた注文を出します。'}</div>`:(sk?'<div class="st ng">3日続けて買えなかったので見送りました。現金は月初の買い付けで次の銘柄に回します。</div>'
    :(uf?`<div class="st ng">「${sell?'売れなかった':'買えなかった'}」を受け付けました（${uf}回目）。次の朝、新しい指値で出し直します。</div>`
-   :(sent?`<div class="st ok">送信済み（${esc(sent)}）。PC の次の処理で取り込みます。</div>`:''))));
+   :(sent?`<div class="st ok">送信済み（${esc(sent)}）。次の朝の処理で取り込みます。</div>`:''))));
  const vh=v?`<span class="vchip ${v.verdict}">${VLAB[v.verdict]}</span>`:'';
- const vnote=(v&&v.note?`<div class="note">${esc(v.note)}</div>`:'')+(v&&v.action&&v.verdict!=='ok'?`<div class="note"><b>対応：</b>${esc(v.action)}</div>`:'');
- const avb=v&&v.verdict==='skip'&&!sell&&!opt&&!av?`<div class="act2"><button class="p" style="flex:1" data-avoid="${i}">見送る（次の順位の銘柄に替える）</button></div>`:'';
- return `<div class="ord${opt?' opt':''}" ${o.filled?'style="opacity:.6"':''}>
-  <div class="ordhead"><span class="badge ${sell?'sell':'buy'}">${esc(o.side)}</span><span class="tk">${o.fund?'NASDAQ100 投信':esc(o.ticker)}</span>${vh}</div>
-  <div class="mut">${esc(o.name||'')}</div>${vnote}
+ const vnote=v&&(v.note||(v.action&&v.verdict!=='ok'))?`<div class="callout ${v.verdict}">${v.note?esc(v.note):''}${v.action&&v.verdict!=='ok'?`<div style="margin-top:${v.note?4:0}px"><b>対応：</b>${esc(v.action)}</div>`:''}</div>`:'';
+ const avb=v&&v.verdict==='skip'&&!sell&&!opt&&!av?`<div class="btns"><button class="p grow" data-avoid="${i}">見送る（次の順位の銘柄に替える）</button></div>`:'';
+ return `<article class="card ord${opt?' opt':''}${o.filled?' filled':''}">
+  <div class="oh"><span class="badge ${sell?'sell':'buy'}">${esc(o.side)}</span><div class="otk"><span class="tk">${o.fund?'NASDAQ100 投信':esc(o.ticker)}</span><span class="mut">${esc(o.name||'')}</span></div>${vh}</div>
+  ${vnote}
   ${(opt||o.replaces)&&o.reason?`<div class="note">${esc(o.reason)}</div>`:''}${avb}
-  ${rec}${whole}<h3>実際に${sell?'売った':'買った'}内容</h3>${inputs}
-  <div class="act2"><span class="note" style="flex:1;margin:0">${hint}</span><button class="p" data-send="${i}">送信</button></div>
-  ${opt?'':`<div class="act2"><button class="small" data-miss="${i}">${sell?'売れなかった':'買えなかった'}（寄付が指値を超えた）</button></div>`}
-  <div class="st" id="a_msg${i}"></div>${st}</div>`}
+  ${rec}${whole}
+  <div class="sendbox"><div class="sh">実際に${sell?'売った':'買った'}内容を送る</div>${inputs}
+  <div class="note" style="margin-top:6px">${hint}</div>
+  <div class="btns">${opt?'':`<button class="ghost grow" data-miss="${i}">${sell?'売れなかった':'買えなかった'}</button>`}<button class="p grow" data-send="${i}">送信</button></div>
+  ${opt?'':`<div class="mut" style="margin-top:6px">「${sell?'売れなかった':'買えなかった'}」は、寄付が指値を超えて始まった時に押します。</div>`}
+  <div class="st" id="a_msg${i}"></div>${st}</div></article>`}
 document.addEventListener('click',async e=>{const x=e.target.closest('[data-avoid]');if(!x)return;e.preventDefault();
- const i=+x.dataset.avoid,o=B.orders[i];const [ok,m]=await post('見送り '+o.ticker);msgTo('a_msg'+i,ok?'見送りを送りました。次の朝、次の順位の銘柄に置き換えた注文を出します。':m,ok)});
+ const i=+x.dataset.avoid,o=B.orders[i];const [ok,m]=await post('見送り '+o.ticker);msgTo('a_msg'+i,ok?'見送りを送りました。次の朝、次の順位の銘柄に置き換えた注文を出します。':m,ok);
+ if(ok){markSent((B.orders_date||'')+'|'+o.ticker+'|'+i,'見送り・'+nowText());renderSteps(B);updateDot()}});
 document.addEventListener('click',async e=>{const x=e.target.closest('[data-miss]');if(!x)return;e.preventDefault();
- const i=+x.dataset.miss,o=B.orders[i];const [ok,m]=await post('未約定 '+o.ticker);msgTo('a_msg'+i,ok?'受け付けました。次の朝、新しい指値で出し直します（最大3日）。':m,ok)});
+ const i=+x.dataset.miss,o=B.orders[i];const [ok,m]=await post('未約定 '+o.ticker);msgTo('a_msg'+i,ok?'受け付けました。次の朝、新しい指値で出し直します（最大3日）。':m,ok);
+ if(ok){markSent((B.orders_date||'')+'|'+o.ticker+'|'+i,(o.side.includes('売')?'売れなかった':'買えなかった')+'・'+nowText());renderSteps(B);updateDot()}});
 document.addEventListener('click',e=>{const b=e.target.closest('.setq');if(b){e.preventDefault();const el=$('a_sh'+b.dataset.i);if(el)el.value=b.dataset.q}
  const s=e.target.closest('[data-send]');if(s){e.preventDefault();sendOrder(+s.dataset.send)}});
 async function sendOrder(i){const o=B.orders[i],side=o.side.includes('売')?'売':'買';let text;
@@ -284,7 +376,7 @@ async function sendOrder(i){const o=B.orders[i],side=o.side.includes('売')?'売
  else{const t=$('a_tk'+i).value.trim().toUpperCase(),px=$('a_px'+i).value.trim(),sh=$('a_sh'+i).value.trim();
   if(!t||!px||!sh||isNaN(+px)||isNaN(+sh))return msgTo('a_msg'+i,'銘柄・値段・口数を入れてください。',false);text=t+' '+side+' '+sh+' '+px}
  const [ok,m]=await post(text);msgTo('a_msg'+i,m,ok);
- if(ok)markSent((B.orders_date||'')+'|'+o.ticker+'|'+i,new Date().toLocaleString('ja-JP',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}))}
+ if(ok){markSent((B.orders_date||'')+'|'+o.ticker+'|'+i,nowText());renderSteps(B);updateDot()}}
 async function sendOther(){const t=$('o_tk').value.trim().toUpperCase(),px=$('o_px').value.trim(),sh=$('o_sh').value.trim().replace(/[,，]/g,''),side=segv($('o_side'));let text;
  // 2026-09-23: CORE（投資信託）は商品を特定できないので受け付けない（ティッカーで入れる）
  if(t==='CORE')return msgTo('o_msg','投資信託は記録できません。ETF や株のティッカーで入れてください。',false);
@@ -295,6 +387,30 @@ async function cashOk(){const [ok,m]=await post('残金確認 OK');msgTo('c_msg'
 async function sendCashDual(){const j=$('f_cjpy').value.trim().replace(/[,，¥]/g,''),u=$('f_cusd').value.trim().replace(/[,，$]/g,'');
  if(j===''||u===''||isNaN(+j)||isNaN(+u))return msgTo('c_msg','円とドルの両方を入れてください（無い方は 0）。',false);
  const [ok,m]=await post('残金 '+j+' '+u);msgTo('c_msg',m,ok)}
+// ---- 注文の流れ（2026-10-03 画面 v26: 検算 → 両替 → 寄付の注文 → 約定を送る の4段で、今どこかを示す）
+function renderSteps(b){const orders=b.orders||[];$('flowCard').style.display=orders.length?'':'none';if(!orders.length)return;
+ const v=b.verify,fx=b.fx_need,main=mainOrders(b),its=(v&&v.items)||{};
+ const n=main.length,m=main.filter(([o,i])=>handled(o,i)).length,all=n>0&&m>=n,hasSell=main.some(([o])=>o.side.includes('売'));
+ const skips=main.filter(([o])=>!o.side.includes('売')&&(its[o.ticker]||{}).verdict==='skip'&&!(b.avoid||{})[o.ticker]).map(([o])=>o.ticker);
+ const cautions=Object.values(its).filter(x=>x.verdict==='caution'||x.verdict==='skip').length;
+ const s=[];
+ if(!v)s.push(['done','Claude の検算','検算の依頼はありません。']);
+ else if(v.status==='pending')s.push(['wait','Claude の検算を待つ','結果が届くまで注文しないでください（届くと通知が来ます）。']);
+ else if(skips.length)s.push(['warn','Claude の検算：見送りを推奨あり',skips.join('、')+' は注文せず、「見送る」を押してください。']);
+ else if(v.status==='incomplete')s.push(['warn','Claude の検算：途中まで','調べきれなかった銘柄があります。下の知らせを読んでから注文してください。']);
+ else if(v.status==='caution'||cautions)s.push(['warn','Claude の検算：注意あり','各注文の「対応」を読んでください。多くは指示どおりで構いません。']);
+ else if(v.status==='ok')s.push(['done','Claude の検算：問題なし','そのまま注文して構いません。']);
+ else s.push(['warn','Claude の検算','下の知らせを読んでから注文してください。']);
+ if(all)s.push(['done','円をドルに替える','注文はすべて済んでいます。']);
+ else if(fx&&fx.need_usd>0)s.push(['todo','円をドルに替える','約 $'+num(fx.need_usd,0)+'（約 '+yen(fx.need_jpy)+'）を替えてください。']);
+ else if(fx)s.push(['done','円をドルに替える','替える必要はありません（ドルの残金'+(fx.sell_usd>0?'と売りの代金':'')+'で足ります）。']);
+ else s.push(['todo','残金を確かめる','moomoo の残金が注文の合計に足りるか確かめてください。']);
+ s.push([all?'done':'todo','米国市場の寄付に指値で注文','日本時間 22:30（冬は 23:30）。'+(hasSell?'売りを先に出します。':'')+(b.limit_note||'')+'寄付が指値を超えて始まったら追いかけません。']);
+ s.push([all?'done':'todo',hasSell?'約定した内容を送る':'買えた内容を送る',n+' 件中 '+m+' 件を送りました。'+(m<n?(hasSell?'買えなかった・売れなかった時は、そのボタンを押します（次の朝に出し直し、最大3日）。':'買えなかった時は「買えなかった」を押します（次の朝に出し直し、最大3日）。'):'')]);
+ let cur=false;$('steps').innerHTML=s.map(([k,t,d],j)=>{let c={done:'done',warn:'warn',wait:'warn',todo:''}[k];
+  if(!cur&&(k==='todo'||k==='wait')){cur=true;if(k==='todo')c='now'}
+  const mark=k==='done'?'✓':(k==='wait'?'…':(k==='warn'?'!':String(j+1)));
+  return `<li class="step ${c}"><span class="n">${mark}</span><div><b>${esc(t)}</b><span>${esc(d)}</span></div></li>`}).join('')}
 // ---- 推移
 let CV=[],LO=0,HI=1;
 const X=i=>CV.length<2?0:6+(i/(CV.length-1))*308, Y=v=>160-((v-LO)/((HI-LO)||1))*146;
@@ -321,10 +437,11 @@ function showSel(i){const p=CV[i],el=$('sel');if(!p){el.innerHTML='';return}
  el.innerHTML=h}
 ['mousedown','mousemove','touchstart','touchmove'].forEach(t=>$('chart').addEventListener(t,e=>{if(t==='mousemove'&&!e.buttons)return;pickAt(e)},{passive:true}));
 // ---- 表示
-const PAL=['#2f6bff','#7c5cff','#0a9f6a','#e5484d','#d97706','#0891b2','#db2777','#4f46e5','#059669','#b45309'];
+const PAL=['#2563eb','#6d4aff','#047857','#dc2626','#c2410c','#0e7490','#be185d','#4338ca','#15803d','#a16207'];
+function jdate(d){const x=new Date(d+'T00:00:00');return (x.getMonth()+1)+'月'+x.getDate()+'日（'+'日月火水木金土'[x.getDay()]+'）'}
 function avColor(t){let h=0;for(const c of t)h=(h*31+c.charCodeAt(0))>>>0;return PAL[h%PAL.length]}
 function render(b){B=b;INBOX=b.inbox||'';
- $('sub').textContent='米国市場 '+b.asof+' の終値まで'+(b.fx?'／1ドル '+Number(b.fx).toFixed(1)+'円':'');
+ $('sub').textContent=b.asof+' の終値'+(b.fx?'・1ドル '+Number(b.fx).toFixed(1)+'円':'');
  $('strat').textContent=b.strategy_short||'—';
  // 知らせ
  let bn='';
@@ -334,15 +451,15 @@ function render(b){B=b;INBOX=b.inbox||'';
  if(b.deposit_ask)bn+='<div class="banner info"><b>今月の追加投資額を教えてください</b>「記録」の「今月の追加投資」から送ってください。 <button class="small" data-go="records">開く</button></div>';
  $('banners').innerHTML=bn;
  // ホーム
- $('curBtn').textContent=CUR==='USD'?'$':'¥';
+ curMark();
  $('k_total').textContent=b.total_jpy!=null?money(b.total_usd,b.total_jpy):(b.next_trade&&b.next_trade.kind==='start'?'開始前':'—');
- const kr=$('k_ret');kr.textContent=pct(b.ret);kr.className='pill num '+cls(b.ret);$('k_spy').textContent=pct(b.spy_ret);
+ const kr=$('k_ret');kr.textContent=pct(b.ret);kr.className='pill num '+cls(b.ret);const ks=$('k_spy');ks.textContent=pct(b.spy_ret);ks.className='num '+cls(b.spy_ret);
  $('k_hold').textContent=b.n_holdings?b.n_holdings+' 銘柄':'—';
  const nt=b.next_trade,W='日月火水木金土';
  if(nt){$('countdown').style.display='';const dd=new Date(nt.date+'T00:00:00');const ds=(dd.getMonth()+1)+'月'+dd.getDate()+'日（'+W[dd.getDay()]+'）';
   if(nt.days<=0){$('cd_pre').textContent='';$('cd_days').textContent='今日';$('cd_unit').textContent=''}else{$('cd_pre').textContent='あと ';$('cd_days').textContent=nt.days;$('cd_unit').textContent=' 日'}
   $('cd_lab').textContent=nt.kind==='start'?'最初の売買まで':'次の点検（銘柄の入れ替え）まで';
-  $('cd_sub').textContent=ds+'の朝 9:30 に注文をお知らせします。'+(nt.kind==='start'?'':'それまでは基本的に売買しません（月初は、送った入金の分の買い増しがあります）。')}
+  $('cd_sub').textContent=ds+'の朝 10 時ごろに注文をお知らせします。'+(nt.kind==='start'?'':'それまでは基本的に売買しません（月初は、送った入金の分の買い増しがあります）。')}
  else $('countdown').style.display='none';
  $('k_cash').textContent=b.cash_jpy!=null?money(b.cash_usd,b.cash_jpy):'—';
  const v=b.verify;$('k_verify').textContent=!v?'—':({pending:'確認中',ok:'問題なし',caution:'注意あり',incomplete:'途中まで'}[v.status]||'—');
@@ -350,8 +467,8 @@ function render(b){B=b;INBOX=b.inbox||'';
  $('curveNote').textContent=b.curve_kind==='actual'?('最初の約定（'+(b.curve_start||'')+'）を 100 としています。入金の分は除いて測ります。'):'';
  chart();
  // 注文
- const orders=b.orders||[];const open=orders.filter(o=>!o.filled&&!o.side.includes('選択肢')).length;
- const dot=$('dot-orders');dot.style.display=open?'':'none';dot.textContent=open;
+ const orders=b.orders||[];const open=mainOrders(b).filter(([o,i])=>!handled(o,i)).length;updateDot();
+ $('ordersHead').textContent=orders.length?((b.orders_date||'')+' の指示・'+orders.length+' 件'):'';
  $('ordersNote').textContent=orders.length?((b.orders_date||'')+' の指示です。米国市場の寄付（日本時間 22:30、冬は 23:30）に指値で注文してください。売りを先にします。'+(b.limit_note||'')+'寄付が指値を超えて始まったら追いかけず、「買えなかった」を押してください（次の朝に出し直し、最大3日）。買えたら「実際に買った内容」を直して送信してください。'):'いま出ている注文はありません。';
  const unc=orders.length&&b.cash_split&&!b.cash_split.confirmed;
  const fxn=b.fx_need,fxb=fxn&&orders.length?(fxn.need_usd>0
@@ -359,35 +476,46 @@ function render(b){B=b;INBOX=b.inbox||'';
    :`<div class="banner"><b>円からドルに替える必要はありません</b>ドルの残金${fxn.sell_usd>0?'と売りの代金':''}で足ります。</div>`):'';
  $('verifyBox').innerHTML=fxb+(unc?'<div class="banner alert"><b>残金が照合されていません</b>注文の合計が口座の残金を超えていないか、moomoo で確かめてから注文してください（「記録」の「口座の残金の確認」で照合できます）。</div>':'')+(!v?'':(v.status==='pending'?'<div class="banner alert"><b>Claude の検算が終わるまで、注文しないでください</b>結果が届くと、通知と画面に出ます（「注文の時間です」の知らせも検算の後に届きます）。</div>'
    :`<div class="banner ${v.status==='ok'?'info':'alert'}"><b>Claude の検算：${({ok:'問題なし',caution:'注意あり',incomplete:'途中まで'})[v.status]||''}</b>${esc(v.summary||'')}${v.checked_at?'<div class="mut">'+esc(v.checked_at.replace('T',' ').slice(0,16))+' 確認</div>':''}</div>`));
+ const keep={};document.querySelectorAll('#orders input[id]').forEach(x=>{keep[x.id]=x.value});
  $('orders').innerHTML=orders.length?orders.map(orderHtml).join(''):'';
- $('orders').parentElement.style.display=orders.length?'':'none';
+ if(B===b&&b.__keep===ordersKey(b))for(const [k,v] of Object.entries(keep)){const el=$(k);if(el)el.value=v}
+ b.__keep=ordersKey(b);
+ $('ordersEmpty').style.display=orders.length?'none':'';
+ $('ordersEmptyNote').textContent=nt&&nt.date?('次の注文は '+jdate(nt.date)+'の朝 10 時ごろにお知らせします。'):'';
+ renderSteps(b);
  // 持ち株
  $('basis').textContent=b.curve_kind==='actual'?(b.basis||''):'';const nm=b.names||{};
+ $('holdHead').textContent=b.n_holdings?(b.n_holdings+' 銘柄'+(b.total_jpy!=null?'・'+money(b.total_usd,b.total_jpy):'')):'';
  $('hlist').innerHTML=(b.holdings||[]).map(h=>`<div class="hrow"><div class="av" style="background:${avColor(h.ticker)}">${esc(h.ticker.slice(0,4))}</div>
-   <div class="hmid"><b>${esc(h.ticker)}</b><span>${esc(h.name||nm[h.ticker]||'')}</span><span class="num">${h.shares!=null?qty(h.shares)+' 株':''}　比率 ${(h.weight*100).toFixed(1)}%</span><div class="bar"><i style="width:${Math.min(100,h.weight*100*2.5)}%"></i></div></div>
+   <div class="hmid"><b>${esc(h.ticker)}</b><span>${esc(h.name||nm[h.ticker]||'')}</span><span class="num">${h.shares!=null?qty(h.shares)+' 株・':''}比率 ${(h.weight*100).toFixed(1)}%</span><div class="bar"><i style="width:${Math.min(100,h.weight*100*2.5)}%"></i></div></div>
    <div class="hright num"><b>${money(h.value_usd,h.value_jpy)}</b><span class="${cls(h.gain)}">${pct(h.gain,1)}</span></div></div>`).join('')
   ||'<div class="empty">—</div>';
  $('cash').textContent=(b.cash_jpy!=null?'現金 '+money(b.cash_usd,b.cash_jpy):'')+(b.pending?'／注文待ち：'+b.pending:'');
  // 記録
  $('cashPc').textContent=b.cash_jpy!=null?('PC の計算：'+money(b.cash_usd,b.cash_jpy)+'（'+other(b.cash_usd,b.cash_jpy)+'）'):'—';
  const cs=b.cash_split;
- $('cashSplit').innerHTML=cs?('内訳：円 <b>'+yen(cs.jpy)+'</b>／ドル <b>$'+num(cs.usd,2)+'</b>'+(cs.confirmed?'　<span class="ok">照合済み</span>':'　<span class="ng">未照合</span>')):'';
+ $('cashSplit').innerHTML=cs?('内訳：円 <b>'+yen(cs.jpy)+'</b>／ドル <b>$'+num(cs.usd,2)+'</b>'+(cs.confirmed?'　<span class="tag ok">照合済み</span>':'　<span class="tag ng">未照合</span>')):'';
  const ck=b.cash_check;
  $('cashLast').textContent=!ck?'':('前回の確認：'+ck.date+(ck.actual_jpy==null?'、一致していました。':('、PC の計算 '+money(null,ck.pc_jpy)+'、実際 '+money(null,ck.actual_jpy)+'（PC の計算より '+money(null,Math.abs(ck.diff))+(ck.diff<0?' 少ない':' 多い')+'）。実際の値に合わせました。')));
- $('depCard').style.border=b.deposit_ask?'2px solid var(--acc)':'';$('dot-records').style.display=b.deposit_ask?'':'none';
+ $('depCard').classList.toggle('hl',!!b.deposit_ask);$('dot-records').style.display=b.deposit_ask?'':'none';
  $('depNote').textContent=(b.deposit_pending_jpy>0?'受け取った入金：'+yen(b.deposit_pending_jpy)+'（次の処理で買い増しの指示を出します）。':'');
  renderSends(b);
- $('hist').innerHTML=(b.changes||[]).slice(0,8).map(c=>`<div><b>${esc(c.date)}</b>　売り ${esc(c.sell.join('、')||'なし')}／買い ${esc(c.buy.join('、')||'なし')}</div>`).join('')||'なし';
- // 最初に開くタブ: 未約定の注文があれば「注文」
- if(!userTab){let t='home';try{t=localStorage.getItem('qai_tab')||'home'}catch(e){}if(open)t='orders';show(t,false)}
+ $('hist').innerHTML=(b.changes||[]).slice(0,8).map(c=>`<div class="srow"><div><b>${esc(c.date)}</b><div class="mut">売り ${esc(c.sell.join('、')||'なし')}／買い ${esc(c.buy.join('、')||'なし')}</div></div></div>`).join('')||'なし';
+ // 開くタブ: 読み込み直しでは今いたタブのまま。新しい注文が出た時だけ、最初の1回に「注文」を開く
+ if(!userTab){let t=ss.get('qai_tab_s',null)||ls.get('qai_tab','home');
+  if(open&&ls.get('qai_orders_seen','')!==ordersKey(b))t='orders';
+  show(t,false);
+  if(!restored){restored=true;if(!HT&&SC0&&SC0.t===t&&SC0.y>0)requestAnimationFrame(()=>scrollTo(0,SC0.y))}}
 }
-async function load(force){
+async function load(force){const rb=$('reloadBtn');rb.classList.add('spin');
  try{const r=await fetch('board.json'+(force?'?t='+Date.now():''),{cache:force?'no-store':'default'});let b=await r.json();
   if(b.encrypted){const p=getPass();if(!p){$('lock').style.display='';$('sub').textContent='合言葉が必要です。';return}
    try{b=await decrypt(b,p)}catch(e){$('lock').style.display='';$('sub').textContent='合言葉が違います。';return}}
   $('lock').style.display='none';render(b);
- }catch(e){$('sub').textContent='読み込めませんでした（電波を確認してください）。'}}
+ }catch(e){$('sub').textContent='読み込めませんでした（電波を確認してください）。'}
+ finally{rb.classList.remove('spin')}}
 seg($('o_side'));
+show(ss.get('qai_tab_s',null)||ls.get('qai_tab','home'),false);
 getPass();load(true);
 if('serviceWorker' in navigator){let reloaded=false;
  navigator.serviceWorker.addEventListener('controllerchange',()=>{if(!reloaded){reloaded=true;location.reload()}});
